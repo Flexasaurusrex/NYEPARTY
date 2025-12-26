@@ -28,22 +28,20 @@ export default async function handler(req, res) {
     console.log('Style:', style);
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
-    // Global prefix - preserves identity
-    const globalPrefix = "Preserve the original character's identity, face shape, hairstyle, colors, and recognizable features from the input image. Keep the same character centered and framed as a profile picture. Do not change the character's species or core design. Transform the character into a joyful New Year's Eve party version while maintaining recognizability.";
-    
-    // Global negative prompt
-    const negativePrompt = "blurry, low quality, distorted face, extra limbs, bad hands, deformed fingers, cross-eye, duplicate face, cropped head, out of frame, watermark, logo, text, letters, numbers, scary, uncanny, overexposed, messy background";
+    // Global negative prompt - MANDATORY, blocks human faces aggressively
+    const negativePrompt = "human face, realistic human skin, photorealistic portrait, human anatomy, uncanny, scary, horror, gore, blurry, low quality, distorted face, extra limbs, bad hands, deformed fingers, duplicate face, cropped head, out of frame, watermark, logo, text, letters, numbers, messy background";
 
-    // Production-ready style prompts
+    // Production-ready anthropomorphic style prompts - ALL create party animals
     const stylePrompts = {
-      classic: 'Wearing a glittery New Year\'s Eve party hat with colorful streamers, holding a party blower and loose confetti visible in the foreground. Festive balloons and soft celebratory lights in the background. Joyful expression, bright party atmosphere. No readable text.',
-      sparkly: 'Surrounded by glowing sparklers and floating golden glitter, wearing a glamorous New Year\'s crown. Champagne bubbles rising through the scene, warm golden light, magical celebratory atmosphere. Sparkles clearly visible around the character\'s head and shoulders.',
-      fireworks: 'Colorful fireworks bursting in the night sky behind the character, soft glow lighting their face. Wearing festive party sunglasses and holding a lit sparkler. Vibrant New Year\'s celebration atmosphere, energetic but clean composition.',
-      champagne: 'Elegant New Year\'s Eve champagne celebration. Wearing a sophisticated party outfit. Two champagne glasses clinking near the character, soft golden bokeh lights in the background. Refined, celebratory mood, warm highlights.'
+      classic: 'Reimagine the original character as an anthropomorphic party animal while preserving the original color palette, facial expression, accessories, pose, and framing. Wearing a glittery New Year\'s Eve party hat with colorful streamers, holding a party blower and loose confetti visible in the foreground. Festive balloons and soft celebratory lights in the background. Joyful, friendly party atmosphere. Clean illustration, PFP-ready.',
+      sparkly: 'Reimagine the original character as an anthropomorphic party animal while preserving recognizable features, colors, and expression. Surrounded by glowing sparklers and floating golden glitter. Wearing a glamorous New Year\'s crown. Champagne bubbles rising through the scene, warm golden light, magical celebratory atmosphere. Sparkles concentrated around the head and shoulders. Clean, celebratory illustration.',
+      fireworks: 'Reimagine the original character as an anthropomorphic party animal while preserving pose, color palette, and accessories. Wearing festive party sunglasses. Colorful fireworks exploding in the night sky behind the character, sparks reflecting in their eyes. Holding a lit sparkler. Energetic, playful New Year\'s Eve celebration. Bold, fun, expressive style. Clean illustration.',
+      champagne: 'Reimagine the original character as an anthropomorphic party animal while preserving expression, accessories, and framing. Elegant New Year\'s Eve champagne celebration. Wearing a sophisticated party outfit. Champagne glasses clinking near the character, soft golden bokeh lights in the background. Refined, classy celebration mood. Clean, premium illustration.'
     };
 
-    // Use Replicate's img2img for actual transformation
-    const prompt = `${globalPrefix} ${stylePrompts[style]}`;
+    // Use unified approach - all styles transform to anthropomorphic animals
+    const prompt = stylePrompts[style];
+    const strength = 0.70; // Unified strength for consistent transformation
     
     console.log('Starting Replicate prediction...');
     
@@ -61,7 +59,7 @@ export default async function handler(req, res) {
           image: image,
           prompt: prompt,
           negative_prompt: negativePrompt,
-          strength: 0.6,
+          strength: strength,
           num_inference_steps: 40,
           guidance_scale: 6.5
         }
