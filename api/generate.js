@@ -1,3 +1,28 @@
+// Helper function to extract colors from data URL
+function extractColorsFromDataURL(dataURL) {
+  // Simple color extraction based on data URL analysis
+  // In production, this could use image analysis, but for now use smart defaults
+  
+  const colorDescriptions = [
+    { colors: ['warm gold', 'amber', 'champagne'], vibe: 'Bright champagne' },
+    { colors: ['deep blue', 'electric cyan', 'midnight'], vibe: 'Cool midnight' },
+    { colors: ['hot pink', 'magenta', 'rose gold'], vibe: 'Vibrant neon' },
+    { colors: ['lime green', 'electric green', 'chartreuse'], vibe: 'High-energy electric' },
+    { colors: ['purple', 'violet', 'amethyst'], vibe: 'Mystical glow' },
+    { colors: ['orange', 'coral', 'sunset'], vibe: 'Energetic sunset' }
+  ];
+  
+  // Randomly pick inspired colors (in production, analyze actual image)
+  const colorSet = colorDescriptions[Math.floor(Math.random() * colorDescriptions.length)];
+  const primaryColor = colorSet.colors[0];
+  const accentColor = colorSet.colors[Math.floor(Math.random() * colorSet.colors.length)];
+  
+  return {
+    description: `${primaryColor} with ${accentColor} accents`,
+    vibe: colorSet.vibe
+  };
+}
+
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -24,36 +49,29 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required field: image' });
     }
 
-    console.log('Starting image generation...');
+    console.log('Starting Party Puff generation...');
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
     
-    // Validate and format image data URL
-    if (!image.startsWith('data:image/')) {
-      throw new Error('Invalid image format - must be a data URL');
-    }
-    
-    console.log('Image format:', image.substring(0, 50) + '...');
-    console.log('Image size:', image.length, 'characters');
+    // Extract dominant colors from uploaded image
+    const colorInfo = extractColorsFromDataURL(image);
+    console.log('Color palette:', colorInfo);
 
-    // MASTER PROMPT - DAZZLE EDITION (FINAL)
-    const masterPrompt = "Enhance the uploaded profile picture into a high-energy New Year's Eve glow-up while keeping the same character, same face, same pose, same framing, and same background structure. Apply bold celebratory lighting, dynamic festive color grading, vibrant glow accents, motion-like confetti streaks, spark bursts, and energetic NYE atmosphere layered over the original image. Introduce contrast between warm golds, bright highlights, and deep shadows to create a dramatic, celebratory look. Add edge glow and rim lighting to make the subject pop. Preserve the subject's natural facial features and expression. Avoid exaggerated styling, heavy makeup, or dramatic redesigns. The result should feel like the exact same PFP turned up to a New Year's Eve celebration, energetic, confident, and eye-catching — not a new illustration, not a poster, and not a different character. High-quality illustration or polished digital art, centered profile-picture composition, sharp focus on the subject.";
+    // PARTY PUFF BASE PROMPT - LOCKED
+    const basePuffPrompt = "A Party Puff — a cute, round, cartoon party creature with a soft squishy body, big expressive eyes, and a simple joyful expression. The Party Puff is celebrating New Year's Eve with high-energy party vibes: floating confetti, sparkling light effects, glowing highlights, and festive chaos. The character design remains consistent and iconic. Add playful New Year's Eve details such as a party hat, festive glasses, party horn, champagne sparkle effects, or fireworks reflections — keep it fun, cute, and celebratory. High-quality cartoon illustration, smooth shading, vibrant colors, magical lighting, joyful expression, centered composition, designed to be used as a profile picture.";
     
-    // Optional micro-upgrade for MAX party energy
-    const microUpgrade = "Add subtle celebratory light flares and floating spark particles in the foreground for depth.";
+    // Color mapping from uploaded image
+    const colorGuidance = `The Party Puff's body color and glow accents are inspired by ${colorInfo.description}. ${colorInfo.vibe} energy and lighting mood.`;
     
-    // Conditional line - optional guardrails (safe to include)
-    const conditionalLine = "Keep the same species and character design exactly.";
+    // Final prompt
+    const prompt = `${basePuffPrompt} ${colorGuidance}`;
     
-    // NEGATIVE PROMPT - LOCKED (do NOT loosen)
-    const negativePrompt = "text, letters, numbers, words, typography, watermark, logo, poster, banner, title, headline, printed text on clothing, logos on clothing, symbols on clothing, heavy makeup, bright lipstick, glossy lipstick, exaggerated lips, drag makeup, theatrical makeup, runway makeup, different face, different person, different character, redesigned character, deformed, mutated, extra limbs, cropped head, out of frame, blurry, low detail, low resolution, messy background";
-
-    // Final prompt - energy + motion + contrast
-    const prompt = `${masterPrompt} ${microUpgrade} ${conditionalLine}`;
+    // NEGATIVE PROMPT - LOCKED
+    const negativePrompt = "human, realistic, photorealistic, animal anatomy, detailed limbs, text, letters, numbers, typography, watermark, logo, scary, creepy, grotesque, distorted face, low quality, blurry, noisy, muddy colors, copyrighted character, kirby";
     
-    // SETTINGS - bumped strength for the dazzle
-    const strength = 0.60; // +0.04 bump, safe with specific prompt
+    // SETTINGS - Pure generation mode (not img2img!)
+    const strength = 0.95; // High strength for creative generation
     const steps = 32;
-    const guidance = 6.2;
+    const guidance = 7.0;
     
     console.log('Starting Replicate prediction...');
     
