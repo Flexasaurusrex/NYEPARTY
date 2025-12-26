@@ -1,45 +1,3 @@
-// Helper function to extract dominant colors from base64 image
-async function extractDominantColors(dataURL) {
-  // Convert base64 to buffer and sample colors
-  const base64Data = dataURL.replace(/^data:image\/\w+;base64,/, '');
-  const buffer = Buffer.from(base64Data, 'base64');
-  
-  // Simple color extraction: sample pixels and find most common
-  // For a quick implementation, we'll analyze the data pattern
-  const colorMap = new Map();
-  
-  // Sample every Nth byte to get color distribution
-  for (let i = 0; i < buffer.length - 2; i += 100) {
-    const r = buffer[i];
-    const g = buffer[i + 1];
-    const b = buffer[i + 2];
-    
-    // Quantize to reduce color space
-    const qr = Math.floor(r / 32) * 32;
-    const qg = Math.floor(g / 32) * 32;
-    const qb = Math.floor(b / 32) * 32;
-    
-    const colorKey = `${qr},${qg},${qb}`;
-    colorMap.set(colorKey, (colorMap.get(colorKey) || 0) + 1);
-  }
-  
-  // Get top 4 colors
-  const sortedColors = Array.from(colorMap.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 4)
-    .map(([rgb]) => {
-      const [r, g, b] = rgb.split(',').map(Number);
-      return `rgb(${r}, ${g}, ${b})`;
-    });
-  
-  return {
-    primary: sortedColors[0] || 'rgb(100, 200, 100)',
-    secondary: sortedColors[1] || 'rgb(200, 100, 150)',
-    accent: sortedColors[2] || 'rgb(150, 150, 255)',
-    highlight: sortedColors[3] || 'rgb(255, 200, 100)'
-  };
-}
-
 module.exports = async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -60,60 +18,43 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { image } = req.body;
+    const { image, paletteHex, speciesCue } = req.body;
 
-    if (!image) {
-      return res.status(400).json({ error: 'Missing required field: image' });
+    if (!image || !paletteHex || !speciesCue) {
+      return res.status(400).json({ error: 'Missing required fields: image, paletteHex, speciesCue' });
     }
 
     console.log('Starting Party Puff generation with FLUX...');
-    console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
+    console.log('Species cue:', speciesCue);
+    console.log('Palette:', paletteHex);
 
-    // Extract colors from uploaded image
-    const colors = await extractDominantColors(image);
-    console.log('Extracted colors:', colors);
+    // Build prompt with extracted palette and species cue
+    const palette = paletteHex.join(", ");
+    
+    const prompt = `Create a single, ultra-cute New Year's Eve mascot character called a ${speciesCue}. The mascot is a round, soft, chubby 'puff' creature with clean cartoon linework, simple shapes, and exactly TWO eyes. It must feel like an irresistible sticker / avatar icon.
 
-    // PARTY PUFF PROMPT - ChatGPT optimized version
-    const prompt = `Create a cute, friendly cartoon mascot called a "Party Puff" celebrating New Year's Eve.
-The Party Puff MUST follow these rules:
-- One round, circular body
-- EXACTLY two large friendly eyes
-- EXACTLY one small smiling mouth
-- No nose
-- No extra faces
-- No extra eyes
-- No extra limbs
-- Simple, clean silhouette
-- Smooth flat colors
-- Clear dark outline
-- Cute, wholesome, sticker-like appearance
-IMPORTANT COLOR RULE:
-- The Party Puff's MAIN BODY COLOR must be based on the DOMINANT COLOR of the uploaded image
-- If the uploaded image is mostly green, the Party Puff should be green
-- If mostly blue, the Party Puff should be blue
-- Secondary colors from the image may be used for cheeks, glow, confetti, or accessories
-STYLE:
-- Clean cartoon illustration
-- Vector-style shading
-- No texture noise
-- No realism
-- No painterly brush strokes
-- No gradients on the body (flat color only)
-NEW YEAR'S EVE THEME:
-- Colorful confetti
-- Sparkles and soft glow
-- ONE simple party accessory only (party hat OR glasses OR horn)
-- Joyful, happy expression
-COMPOSITION:
-- Centered character
-- Simple background that complements the body color
-- Designed to look great as a circular profile picture
-DO NOT copy any characters, faces, symbols, or shapes from the uploaded image.`;
+CRITICAL COLOR MATCHING: Use this exact palette derived from the user's PFP as the ONLY main colors: ${palette}. Apply it like this:
+- Primary body color = first palette color
+- Secondary accents (cheeks, spots, belly, outline accents) = second palette color
+- Accessories (party hat/noisemaker/bowtie) = third palette color
+- Sparkles/confetti/highlight glows = fourth palette color (if provided)
+Do NOT introduce random new dominant colors outside the palette.
 
-    // NEGATIVE PROMPT - ChatGPT version
-    const negativePrompt = `realistic, photorealistic, horror, creepy, scary, abstract, surreal, extra eyes, extra faces, multiple mouths, fur, wrinkles, texture noise, painterly, complex shading, gradients on body, kirby, copyrighted character`;
+NYE PARTY ENERGY: Add high 'razzamatazz' celebration elements around the mascot: confetti burst, glitter sparkles, small fireworks twinkles, bokeh light orbs, festive glow halo, and one fun party prop (party hat or party blower). Make it feel like the mascot is celebrating New Year's Eve HARD — joyful, festive, iconic.
 
-    // FLUX 1.1 Pro - exact recommended settings
+STYLE: clean 2D cartoon mascot, smooth shading, crisp outlines, high polish, centered composition, 1:1 square avatar, simple background (subtle gradient or soft bokeh) that also respects the palette.
+
+HARD CONSTRAINTS:
+- exactly two eyes
+- no extra faces, no extra limbs, no uncanny details
+- no realistic human portrait
+- no text, no letters, no numbers
+- no gore, no creepy, no nightmare fuel
+- keep it cute, friendly, and clean`;
+
+    const negativePrompt = `photorealistic, realistic, human, portrait, uncanny, horror, creepy, nightmare, extra eyes, multiple faces, deformed, mutated, extra limbs, hands, fingers, teeth close-up, gore, blood, text, letters, numbers, watermark, logo, messy lines, lowres, blurry, grainy, bad anatomy, disproportionate features`;
+
+    // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
       headers: {
@@ -129,7 +70,9 @@ DO NOT copy any characters, faces, symbols, or shapes from the uploaded image.`;
           output_format: 'png',
           output_quality: 90,
           safety_tolerance: 2,
-          prompt_upsampling: false // Use our exact prompt
+          num_outputs: 1,
+          guidance: 5, // Slight increase to enforce palette
+          num_inference_steps: 32 // Higher for polish
         }
       })
     });
