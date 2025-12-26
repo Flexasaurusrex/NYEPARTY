@@ -26,7 +26,6 @@ export default async function handler(req, res) {
 
     console.log('Starting image generation...');
     console.log('Style:', style);
-    console.log('Has GOOGLE_AI_KEY:', !!process.env.GOOGLE_AI_KEY);
     console.log('Has TOGETHER_API_KEY:', !!process.env.TOGETHER_API_KEY);
 
     // Style prompts
@@ -37,49 +36,10 @@ export default async function handler(req, res) {
       champagne: 'in an elegant champagne celebration scene, wearing a sophisticated party outfit, with champagne glasses clinking and elegant decorations'
     };
 
-    // Step 1: Analyze the image with Google AI (Gemini)
-    console.log('Calling Google AI API...');
-    const analysisResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': process.env.GOOGLE_AI_KEY
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: 'Describe this person\'s appearance in detail for creating a cartoon character. Focus on: facial features, hairstyle, hair color, skin tone, notable characteristics. Be specific but concise.'
-              },
-              {
-                inline_data: {
-                  mime_type: image.split(';')[0].split(':')[1],
-                  data: image.split(',')[1]
-                }
-              }
-            ]
-          }
-        ]
-      })
-    });
-
-    console.log('Google AI response status:', analysisResponse.status);
-
-    if (!analysisResponse.ok) {
-      const errorText = await analysisResponse.text();
-      console.error('Google AI error:', errorText);
-      throw new Error(`Image analysis failed: ${errorText}`);
-    }
-
-    const analysisData = await analysisResponse.json();
-    const description = analysisData.candidates[0].content.parts[0].text;
-    console.log('Description received:', description.substring(0, 100) + '...');
-
-    // Step 2: Transform image using FLUX.2-dev img2img
-    const prompt = `Transform into festive New Year's 2025 cartoon style. ${stylePrompts[style]}. Maintain the person's exact facial features and appearance. Bright vibrant cartoon colors, cheerful celebratory atmosphere, professional digital art quality.`;
+    // Generate cartoon with Gemini-3-Pro-Image (handles vision + generation)
+    const prompt = `Transform this person's photo into a festive New Year's 2025 cartoon while keeping them completely recognizable. ${stylePrompts[style]}. Maintain their exact facial features, hairstyle, and appearance. Bright vibrant cartoon style, cheerful NYE celebration atmosphere, professional digital art.`;
     
-    console.log('Calling Together.ai FLUX.2-dev img2img...');
+    console.log('Calling Together.ai Gemini-3-Pro-Image...');
     const imageResponse = await fetch('https://api.together.xyz/v1/images/generations', {
       method: 'POST',
       headers: {
@@ -87,13 +47,11 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'black-forest-labs/FLUX.2-dev',
+        model: 'google/gemini-3-pro-image',
         prompt: prompt,
-        image_url: image,
-        prompt_strength: 0.65,
+        image: image,
         width: 1024,
         height: 1024,
-        steps: 28,
         n: 1
       })
     });
