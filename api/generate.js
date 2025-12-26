@@ -28,30 +28,30 @@ export default async function handler(req, res) {
     console.log('Style:', style);
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
-    // Base prompt - ENHANCEMENT ONLY (lighting, color grading, effects)
-    const basePrompt = "Enhance the uploaded PFP into a New Year's Eve celebration version while keeping the same character, same face, same pose, same framing, and same background structure. Apply celebratory lighting, festive color grading, glowing highlights, confetti particles, sparkles, and energetic NYE atmosphere layered over the original image. The result must feel like the same PFP under New Year's Eve lighting, not a redesigned character or poster. Clean high-quality illustration or polished digital art, centered profile-picture composition, sharp focus on the subject.";
+    // Base prompt - ENHANCEMENT ONLY with natural makeup constraint
+    const basePrompt = "Enhance the uploaded PFP into a New Year's Eve celebration version while keeping the same character, same face, same pose, same framing, and same background structure. Apply celebratory lighting, festive color grading, glowing highlights, confetti particles, sparkles, and energetic NYE atmosphere layered over the original image. Maintain natural facial features and realistic makeup for the subject; avoid exaggerated cosmetics or theatrical makeup. The result must feel like the same PFP under New Year's Eve lighting, not a redesigned character or poster. Clean high-quality illustration or polished digital art, centered profile-picture composition, sharp focus on the subject.";
     
     // Conditional line - prevents unwanted transformations
     const conditionalLine = "Keep the same species and character design exactly.";
     
-    // Negative prompt - MANDATORY, blocks redesigns and text
-    const negativePrompt = "text, letters, numbers, words, typography, watermark, logo, poster, banner, title, headline, emblem, badge, frame, border, signature, different face, different person, different character, deformed, mutated, extra limbs, cropped head, out of frame, blurry, low detail";
+    // Negative prompt - MANDATORY, blocks redesigns, text, and heavy makeup
+    const negativePrompt = "text, letters, numbers, words, typography, watermark, logo, poster, banner, title, headline, emblem, badge, frame, border, signature, printed text on clothing, logos on clothing, symbols on clothing, heavy makeup, bright lipstick, glossy lipstick, exaggerated lips, drag makeup, theatrical makeup, runway makeup, different face, different person, different character, deformed, mutated, extra limbs, cropped head, out of frame, blurry, low detail";
 
-    // Vibe-specific suffixes - SAFE effects only (no scene/wardrobe changes)
+    // Vibe-specific suffixes - REFINED effects matched to class
     const vibeSuffixes = {
-      classic: 'Warm festive lighting, subtle gold confetti particles, refined celebratory glow, tasteful NYE color accents.',
-      sparkly: 'Radiant glow lighting, shimmering sparkles layered over the image, soft prismatic highlights, celebratory magic energy.',
-      fireworks: 'Firework-colored rim lighting, dynamic light streaks, energetic celebratory glow effects, subtle firework reflections only.',
-      champagne: 'Elegant warm lighting, champagne-gold highlights, refined celebratory ambiance, upscale glow effects.'
+      classic: 'Warm festive lighting, subtle gold confetti particles drifting across the image, refined celebratory glow, restrained New Year\'s Eve color accents, elegant but understated party atmosphere.',
+      sparkly: 'Radiant glow lighting, shimmering sparkles layered over the image, soft prismatic highlights on edges and accessories, celebratory magic energy without changing facial features or makeup.',
+      fireworks: 'Firework-colored rim lighting, dynamic colored light streaks, energetic celebratory glow effects inspired by fireworks, subtle light bursts layered into the background without replacing it.',
+      champagne: 'Elegant champagne celebration lighting. Soft golden highlights resembling champagne reflections, faint floating champagne bubbles, crystal-glass light refractions, warm upscale glow. Refined luxury NYE ambiance without changing outfit or adding props.'
     };
 
     // Construct final prompt
     const prompt = `${basePrompt} ${conditionalLine} ${vibeSuffixes[style]}`;
     
-    // Settings: SAFE range to prevent identity loss
-    const strength = 0.55; // Do NOT exceed 0.62
+    // Settings: SAFE range - do NOT exceed 0.62
+    const strength = 0.56;
     const steps = 32;
-    const guidance = 6.2;
+    const guidance = 6.3;
     
     console.log('Starting Replicate prediction...');
     
