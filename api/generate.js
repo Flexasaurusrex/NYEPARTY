@@ -73,7 +73,8 @@ export default async function handler(req, res) {
           negative_prompt: negativePrompt,
           strength: strength,
           num_inference_steps: steps,
-          guidance_scale: guidance
+          guidance_scale: guidance,
+          disable_safety_checker: true
         }
       })
     });
