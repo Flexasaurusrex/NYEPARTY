@@ -64,7 +64,46 @@ Composition:
     console.log('Starting Party Puff generation with FLUX...');
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
-    // FLUX is much better at cartoons/mascots than SDXL
+    // PARTY PUFF PROMPT - Optimized for FLUX 1.1 Pro
+    const prompt = `Create a cute, friendly cartoon mascot called a "Party Puff" celebrating New Year's Eve.
+The Party Puff MUST follow these rules:
+- One round, circular body
+- EXACTLY two eyes
+- EXACTLY one small mouth
+- No nose
+- No extra faces
+- No extra eyes
+- No extra limbs
+- Simple, clean silhouette
+- Smooth flat colors
+- Clear black or dark outline
+- Cute, wholesome, sticker-like appearance
+The Party Puff is non-human and looks like a modern game or app mascot.
+STYLE:
+- Clean cartoon illustration
+- Vector-style shading
+- No texture noise
+- No realism
+- No painterly brush strokes
+- No fur, wrinkles, or organic detail
+NEW YEAR'S EVE THEME:
+- Colorful confetti floating around
+- Sparkles and soft glow effects
+- Festive lighting
+- ONE simple party accessory only (party hat OR glasses OR party horn)
+- Joyful, happy expression
+COLOR INSPIRATION:
+- Use the uploaded image ONLY to inspire the color palette and glow accents
+- Do NOT copy characters, faces, shapes, or symbols from the uploaded image
+COMPOSITION:
+- Centered character
+- Plain or softly glowing background
+- Designed to look great as a circular profile picture`;
+
+    // NEGATIVE PROMPT - FLUX respects this very well
+    const negativePrompt = `realistic, photorealistic, horror, creepy, scary, abstract, surreal, extra eyes, extra faces, multiple mouths, deformed anatomy, fur, wrinkles, texture noise, painterly, sketchy, complex background, clutter, kirby, copyrighted character`;
+
+    // FLUX 1.1 Pro - exact recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
       headers: {
@@ -75,11 +114,11 @@ Composition:
       body: JSON.stringify({
         version: 'black-forest-labs/flux-1.1-pro',
         input: {
-          prompt: prompt,
+          prompt: `${prompt}\n\nNegative prompt: ${negativePrompt}`,
           aspect_ratio: '1:1',
           output_format: 'png',
           output_quality: 90,
-          safety_tolerance: 2, // Allow creative content
+          safety_tolerance: 2,
           prompt_upsampling: false // Use our exact prompt
         }
       })
