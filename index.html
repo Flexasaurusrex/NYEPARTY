@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Year's PFP Cartoonizer ✨🎉</title>
+    <title>NYE Party Animal PFP Converter 🎉🦖</title>
     <link href="https://fonts.googleapis.com/css2?family=Righteous&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -430,19 +430,19 @@
 
     <div class="container">
         <header>
-            <h1>🎊 NYE PFP Magic 🎊</h1>
-            <p class="subtitle">Transform your profile pic into a festive cartoon!</p>
+            <h1>🎊 NYE PARTY ANIMAL 🎊</h1>
+            <p class="subtitle">Turn your PFP into a festive party animal!</p>
         </header>
 
         <div class="main-card">
             <!-- Info Box -->
             <div class="info-box">
-                <strong>✨ How it works:</strong> Upload your profile picture, choose a party style, and let AI create a festive cartoon version with New Year's decorations! Powered by <a href="https://nanobanana.ai" target="_blank">Nano Banana</a> & <a href="https://together.ai" target="_blank">Together.ai</a>
+                <strong>✨ How it works:</strong> Upload your Farcaster PFP, choose a party vibe, and transform into a NYE Party Animal! Powered by <a href="https://replicate.com" target="_blank">Replicate</a>
             </div>
 
             <!-- Upload Section -->
             <div class="upload-section">
-                <label class="upload-label">Upload Your Photo</label>
+                <label class="upload-label">Upload Your Farcaster PFP</label>
                 <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">📸</div>
                     <div class="upload-text">Click or drag to upload</div>
@@ -464,22 +464,22 @@
                     </div>
                     <div class="style-option" data-style="sparkly">
                         <span class="style-emoji">✨</span>
-                        <div class="style-name">Sparkle Glam</div>
+                        <div class="style-name">Sparkly Glow</div>
                     </div>
                     <div class="style-option" data-style="fireworks">
                         <span class="style-emoji">🎆</span>
-                        <div class="style-name">Fireworks Fun</div>
+                        <div class="style-name">Fireworks Energy</div>
                     </div>
                     <div class="style-option" data-style="champagne">
                         <span class="style-emoji">🍾</span>
-                        <div class="style-name">Champagne Vibes</div>
+                        <div class="style-name">Champagne Class</div>
                     </div>
                 </div>
             </div>
 
             <!-- Generate Button -->
             <button class="generate-btn" id="generateBtn">
-                🎉 Create My NYE PFP 🎉
+                🎉 Become a Party Animal 🎉
             </button>
 
             <!-- Loading State -->
@@ -492,7 +492,7 @@
             <div class="result-section" id="resultSection">
                 <img id="resultImage" class="result-image" alt="Result">
                 <button class="download-btn" id="downloadBtn">
-                    💾 Download Your NYE PFP
+                    💾 Download Your Party Animal PFP
                 </button>
             </div>
         </div>
@@ -645,7 +645,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `nye-pfp-${Date.now()}.png`;
+            a.download = `party-animal-pfp-${Date.now()}.png`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
