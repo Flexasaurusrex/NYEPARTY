@@ -28,20 +28,31 @@ export default async function handler(req, res) {
     console.log('Style:', style);
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
-    // Global negative prompt - MANDATORY, blocks human faces aggressively
-    const negativePrompt = "human face, realistic human skin, photorealistic portrait, human anatomy, uncanny, scary, horror, gore, blurry, low quality, distorted face, extra limbs, bad hands, deformed fingers, duplicate face, cropped head, out of frame, watermark, logo, text, letters, numbers, messy background";
+    // Base prompt - forces anthropomorphic transformation (used for ALL styles)
+    const basePrompt = "Transform the input PFP into a stylized anthropomorphic party animal character portrait (animal head + humanoid body). Keep the same pose, framing, clothing silhouette, and overall color palette as the original PFP, but replace the human head with an animal head (clearly non-human: muzzle/beak/snout, fur/feathers/scales, animal ears). The result must read as an anthropomorphic animal, not a human in costume. High-quality illustration, clean lines, vibrant celebratory mood, portrait, centered subject.";
+    
+    // Negative prompt - blocks human faces and text aggressively
+    const negativePrompt = 'human face, human head, realistic human skin, portrait photo, ugly, low quality, blurry, extra faces, deformed, disfigured, bad anatomy, text, watermark, logo, words, "2025" text, letters, numbers';
 
-    // Production-ready anthropomorphic style prompts - ALL create party animals
-    const stylePrompts = {
-      classic: 'Reimagine the original character as an anthropomorphic party animal while preserving the original color palette, facial expression, accessories, pose, and framing. Wearing a glittery New Year\'s Eve party hat with colorful streamers, holding a party blower and loose confetti visible in the foreground. Festive balloons and soft celebratory lights in the background. Joyful, friendly party atmosphere. Clean illustration, PFP-ready.',
-      sparkly: 'Reimagine the original character as an anthropomorphic party animal while preserving recognizable features, colors, and expression. Surrounded by glowing sparklers and floating golden glitter. Wearing a glamorous New Year\'s crown. Champagne bubbles rising through the scene, warm golden light, magical celebratory atmosphere. Sparkles concentrated around the head and shoulders. Clean, celebratory illustration.',
-      fireworks: 'Reimagine the original character as an anthropomorphic party animal while preserving pose, color palette, and accessories. Wearing festive party sunglasses. Colorful fireworks exploding in the night sky behind the character, sparks reflecting in their eyes. Holding a lit sparkler. Energetic, playful New Year\'s Eve celebration. Bold, fun, expressive style. Clean illustration.',
-      champagne: 'Reimagine the original character as an anthropomorphic party animal while preserving expression, accessories, and framing. Elegant New Year\'s Eve champagne celebration. Wearing a sophisticated party outfit. Champagne glasses clinking near the character, soft golden bokeh lights in the background. Refined, classy celebration mood. Clean, premium illustration.'
+    // Random animal selection for variety while maintaining consistency
+    const animals = ['fox', 'raccoon', 'tiger', 'bear', 'wolf', 'cat', 'dog', 'bunny', 'panda', 'koala', 'owl', 'crocodile'];
+    const selectedAnimal = animals[Math.floor(Math.random() * animals.length)];
+    const animalLine = `Animal type: ${selectedAnimal} (clearly visible animal features)`;
+
+    // Vibe-specific additions (append to base)
+    const vibePrompts = {
+      classic: 'Wearing a glittery party hat, streamers, confetti burst, party blower in hand. Background: festive NYE decor, balloons, bokeh lights, celebratory atmosphere.',
+      sparkly: 'Surrounded by glitter and sparkles, wearing a glamorous New Year\'s crown/tiara. Champagne bubbles floating, golden confetti, soft glow lighting, magical sparkle haze.',
+      fireworks: 'Explosive fireworks lighting reflecting on the character, energetic celebration pose. Wearing oversized festive sunglasses, holding a sparkler. Background: colorful fireworks filling the sky, vibrant motion confetti, dynamic glow.',
+      champagne: 'Elegant tuxedo/suit or classy party outfit, refined NYE vibe. Champagne toast moment, clinking glasses nearby, warm golden ambient lighting, upscale decorations.'
     };
 
-    // Use unified approach - all styles transform to anthropomorphic animals
-    const prompt = stylePrompts[style];
-    const strength = 0.70; // Unified strength for consistent transformation
+    // Construct final prompt
+    const prompt = `${basePrompt} ${animalLine} ${vibePrompts[style]}`;
+    
+    // Fireworks needs higher strength to overcome background-only tendency
+    const strength = style === 'fireworks' ? 0.75 : 0.65;
+    const guidance = style === 'fireworks' ? 9.0 : 8.5;
     
     console.log('Starting Replicate prediction...');
     
@@ -61,7 +72,7 @@ export default async function handler(req, res) {
           negative_prompt: negativePrompt,
           strength: strength,
           num_inference_steps: 40,
-          guidance_scale: 6.5
+          guidance_scale: guidance
         }
       })
     });
