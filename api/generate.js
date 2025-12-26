@@ -24,6 +24,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    console.log('Starting image generation...');
+    console.log('Style:', style);
+    console.log('Has GOOGLE_AI_KEY:', !!process.env.GOOGLE_AI_KEY);
+    console.log('Has TOGETHER_API_KEY:', !!process.env.TOGETHER_API_KEY);
+
     // Style prompts
     const stylePrompts = {
       classic: 'wearing a glittery party hat with streamers, holding party blowers and confetti, with balloons and "2025" decorations in the background',
@@ -32,46 +37,49 @@ export default async function handler(req, res) {
       champagne: 'in an elegant champagne celebration scene, wearing a sophisticated party outfit, with champagne glasses clinking and elegant decorations'
     };
 
-    // Step 1: Analyze the image with Nano Banana (Google AI Studio)
-    const analysisResponse = await fetch('https://api.nanobanana.ai/v1/chat/completions', {
+    // Step 1: Analyze the image with Google AI (Gemini)
+    console.log('Calling Google AI API...');
+    const analysisResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.GOOGLE_AI_KEY}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-goog-api-key': process.env.GOOGLE_AI_KEY
       },
       body: JSON.stringify({
-        model: 'gemini-2.0-flash-exp',
-        messages: [
+        contents: [
           {
-            role: 'user',
-            content: [
+            parts: [
               {
-                type: 'text',
                 text: 'Describe this person\'s appearance in detail for creating a cartoon character. Focus on: facial features, hairstyle, hair color, skin tone, notable characteristics. Be specific but concise.'
               },
               {
-                type: 'image_url',
-                image_url: {
-                  url: image
+                inline_data: {
+                  mime_type: image.split(';')[0].split(':')[1],
+                  data: image.split(',')[1]
                 }
               }
             ]
           }
-        ],
-        max_tokens: 200
+        ]
       })
     });
 
+    console.log('Google AI response status:', analysisResponse.status);
+
     if (!analysisResponse.ok) {
-      throw new Error('Image analysis failed');
+      const errorText = await analysisResponse.text();
+      console.error('Google AI error:', errorText);
+      throw new Error(`Image analysis failed: ${errorText}`);
     }
 
     const analysisData = await analysisResponse.json();
-    const description = analysisData.choices[0].message.content;
+    const description = analysisData.candidates[0].content.parts[0].text;
+    console.log('Description received:', description.substring(0, 100) + '...');
 
     // Step 2: Generate cartoon with Together.ai
     const prompt = `A fun, vibrant cartoon character illustration in a modern animation style. ${description}. The character is ${stylePrompts[style]}. Cartoon style, bright colors, cheerful expression, celebratory New Year's 2025 atmosphere, festive and joyful vibe, high quality digital art`;
 
+    console.log('Calling Together.ai...');
     const imageResponse = await fetch('https://api.together.xyz/v1/images/generations', {
       method: 'POST',
       headers: {
@@ -88,22 +96,27 @@ export default async function handler(req, res) {
       })
     });
 
+    console.log('Together.ai response status:', imageResponse.status);
+
     if (!imageResponse.ok) {
       const errorData = await imageResponse.text();
       console.error('Together.ai error:', errorData);
-      throw new Error('Image generation failed');
+      throw new Error(`Image generation failed: ${errorData}`);
     }
 
     const imageData = await imageResponse.json();
     const generatedImageUrl = imageData.data[0].url;
 
+    console.log('Success! Image URL:', generatedImageUrl);
     return res.status(200).json({ imageUrl: generatedImageUrl });
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Full error:', error);
+    console.error('Error stack:', error.stack);
     return res.status(500).json({ 
       error: 'Internal server error', 
-      message: error.message 
+      message: error.message,
+      stack: error.stack
     });
   }
 }
