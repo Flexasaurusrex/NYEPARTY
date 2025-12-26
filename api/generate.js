@@ -63,44 +63,50 @@ Composition:
     
     console.log('Calling Imagen 3 API...');
     
-    // Call Google Imagen 3 API
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:generateImage', {
+    // Call Google Imagen 3 API with key as query param
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${process.env.GOOGLE_AI_KEY}`;
+    
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': process.env.GOOGLE_AI_KEY
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        prompt: prompt,
-        negativePrompt: negativePrompt,
-        numberOfImages: 1,
-        aspectRatio: '1:1', // Square for PFP
-        safetyFilterLevel: 'BLOCK_ONLY_HIGH', // Allow creative content
-        personGeneration: 'ALLOW_ADULT', // We're generating mascots, not people
-        // Optimal settings for Party Puff generation
-        // seed: random (omitted = random seed each time)
-        // Medium guidance - don't max it
-        // Low-medium image fidelity - we DON'T want structure preservation
+        instances: [{
+          prompt: prompt,
+          negativePrompt: negativePrompt,
+        }],
+        parameters: {
+          sampleCount: 1,
+          aspectRatio: '1:1',
+          safetyFilterLevel: 'BLOCK_ONLY_HIGH',
+          personGeneration: 'allow_adult'
+        }
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Imagen 3 API error:', errorText);
-      throw new Error(`Imagen 3 generation failed: ${errorText}`);
+      console.error('Imagen 3 API error status:', response.status);
+      console.error('Imagen 3 API error response:', errorText);
+      return res.status(500).json({ 
+        error: `Imagen 3 API error (${response.status})`,
+        details: errorText 
+      });
     }
 
     const data = await response.json();
     console.log('Imagen 3 response received');
 
-    // Extract generated image
-    if (!data.generatedImages || data.generatedImages.length === 0) {
+    // Extract generated image from Vertex AI response format
+    if (!data.predictions || data.predictions.length === 0) {
+      console.error('No predictions in response:', JSON.stringify(data));
       throw new Error('No images generated');
     }
 
-    // Imagen 3 returns base64 image in bytesBase64Encoded field
-    const generatedImage = data.generatedImages[0];
-    const imageData = `data:image/png;base64,${generatedImage.bytesBase64Encoded}`;
+    // Imagen 3 returns base64 image in predictions array
+    const prediction = data.predictions[0];
+    const imageData = `data:image/png;base64,${prediction.bytesBase64Encoded}`;
 
     console.log('Party Puff generated successfully!');
 
