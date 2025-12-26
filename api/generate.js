@@ -61,58 +61,76 @@ Composition:
     // Negative prompt - simplified
     const negativePrompt = `scary, creepy, horror, realistic, abstract, surreal, extra eyes, extra faces`;
     
-    console.log('Calling Imagen 3 API...');
-    
-    // Google AI Imagen API - correct format based on SDK
-    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:generateImages';
-    
-    const response = await fetch(apiUrl, {
+    console.log('Starting Party Puff generation with FLUX...');
+    console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
+
+    // FLUX is much better at cartoons/mascots than SDXL
+    const response = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
       headers: {
+        'Authorization': `Token ${process.env.REPLICATE_API_KEY}`,
         'Content-Type': 'application/json',
-        'x-goog-api-key': process.env.GOOGLE_AI_KEY
+        'Prefer': 'wait'
       },
       body: JSON.stringify({
-        model: 'imagen-3.0-generate-001',
-        prompt: prompt,
-        config: {
-          numberOfImages: 1,
-          aspectRatio: '1:1',
-          negativePrompt: negativePrompt,
-          safetyFilterLevel: 'block_only_high',
-          personGeneration: 'allow_adult'
+        version: 'black-forest-labs/flux-1.1-pro',
+        input: {
+          prompt: prompt,
+          aspect_ratio: '1:1',
+          output_format: 'png',
+          output_quality: 90,
+          safety_tolerance: 2, // Allow creative content
+          prompt_upsampling: false // Use our exact prompt
         }
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Imagen 3 API error status:', response.status);
-      console.error('Imagen 3 API error response:', errorText);
+      console.error('FLUX API error status:', response.status);
+      console.error('FLUX API error response:', errorText);
       return res.status(500).json({ 
-        error: `Imagen 3 API error (${response.status})`,
+        error: `FLUX API error (${response.status})`,
         details: errorText 
       });
     }
 
-    const data = await response.json();
-    console.log('Imagen 3 response received');
+    let prediction = await response.json();
+    console.log('Prediction created:', prediction.id);
+    console.log('Initial status:', prediction.status);
 
-    // Extract generated images (matches Python SDK: response.generated_images)
-    if (!data.generatedImages || data.generatedImages.length === 0) {
-      console.error('No generatedImages in response:', JSON.stringify(data));
-      throw new Error('No images generated');
+    // Poll for completion
+    const maxAttempts = 60;
+    let attempts = 0;
+
+    while (prediction.status !== 'succeeded' && prediction.status !== 'failed' && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const statusResponse = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
+        headers: {
+          'Authorization': `Token ${process.env.REPLICATE_API_KEY}`
+        }
+      });
+
+      prediction = await statusResponse.json();
+      attempts++;
+      
+      if (attempts % 5 === 0) {
+        console.log(`Status check ${attempts}/${maxAttempts}: ${prediction.status}`);
+      }
     }
 
-    // Get first generated image
-    const generatedImage = data.generatedImages[0];
-    
-    // Image data should be in _image_bytes or similar field
-    // Convert to base64 data URL
-    const imageBytes = generatedImage.bytesBase64Encoded || generatedImage._image_bytes;
-    const imageData = `data:image/png;base64,${imageBytes}`;
+    if (prediction.status === 'failed') {
+      console.error('Prediction failed:', prediction.error);
+      throw new Error(`Party Puff generation failed: ${prediction.error}`);
+    }
+
+    if (prediction.status !== 'succeeded') {
+      throw new Error('Party Puff generation timed out');
+    }
 
     console.log('Party Puff generated successfully!');
+    const imageData = prediction.output;
 
     return res.status(200).json({
       imageUrl: imageData,
