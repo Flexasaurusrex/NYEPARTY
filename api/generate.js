@@ -26,21 +26,32 @@ export default async function handler(req, res) {
 
     console.log('Starting image generation...');
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
+    
+    // Validate and format image data URL
+    if (!image.startsWith('data:image/')) {
+      throw new Error('Invalid image format - must be a data URL');
+    }
+    
+    console.log('Image format:', image.substring(0, 50) + '...');
+    console.log('Image size:', image.length, 'characters');
 
-    // MASTER PROMPT - LOCKED, NO VARIANTS
-    const masterPrompt = "Enhance the uploaded profile picture into a clean, premium New Year's Eve glow-up while keeping the same character, same face, same pose, same framing, and same background structure. Apply subtle celebratory lighting, tasteful festive color grading, soft glow highlights, light confetti particles, and a refined New Year's Eve atmosphere layered over the original image. Preserve the subject's natural facial features and expression. Avoid exaggerated styling, heavy makeup, or dramatic redesigns. The result should feel like the exact same PFP, elevated for New Year's Eve, not a new illustration, not a poster, and not a different character. High-quality illustration or polished digital art, centered profile-picture composition, sharp focus on the subject.";
+    // MASTER PROMPT - DAZZLE EDITION (FINAL)
+    const masterPrompt = "Enhance the uploaded profile picture into a high-energy New Year's Eve glow-up while keeping the same character, same face, same pose, same framing, and same background structure. Apply bold celebratory lighting, dynamic festive color grading, vibrant glow accents, motion-like confetti streaks, spark bursts, and energetic NYE atmosphere layered over the original image. Introduce contrast between warm golds, bright highlights, and deep shadows to create a dramatic, celebratory look. Add edge glow and rim lighting to make the subject pop. Preserve the subject's natural facial features and expression. Avoid exaggerated styling, heavy makeup, or dramatic redesigns. The result should feel like the exact same PFP turned up to a New Year's Eve celebration, energetic, confident, and eye-catching — not a new illustration, not a poster, and not a different character. High-quality illustration or polished digital art, centered profile-picture composition, sharp focus on the subject.";
+    
+    // Optional micro-upgrade for MAX party energy
+    const microUpgrade = "Add subtle celebratory light flares and floating spark particles in the foreground for depth.";
     
     // Conditional line - optional guardrails (safe to include)
     const conditionalLine = "Keep the same species and character design exactly.";
     
-    // NEGATIVE PROMPT - LOCKED (doing heavy lifting)
+    // NEGATIVE PROMPT - LOCKED (do NOT loosen)
     const negativePrompt = "text, letters, numbers, words, typography, watermark, logo, poster, banner, title, headline, printed text on clothing, logos on clothing, symbols on clothing, heavy makeup, bright lipstick, glossy lipstick, exaggerated lips, drag makeup, theatrical makeup, runway makeup, different face, different person, different character, redesigned character, deformed, mutated, extra limbs, cropped head, out of frame, blurry, low detail, low resolution, messy background";
 
-    // Final prompt - NO VIBES, universal enhancement
-    const prompt = `${masterPrompt} ${conditionalLine}`;
+    // Final prompt - energy + motion + contrast
+    const prompt = `${masterPrompt} ${microUpgrade} ${conditionalLine}`;
     
-    // LOCKED SETTINGS - stop tweaking
-    const strength = 0.56;
+    // SETTINGS - bumped strength for the dazzle
+    const strength = 0.60; // +0.04 bump, safe with specific prompt
     const steps = 32;
     const guidance = 6.2;
     
