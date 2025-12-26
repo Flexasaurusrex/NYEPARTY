@@ -36,10 +36,10 @@ export default async function handler(req, res) {
       champagne: 'in an elegant champagne celebration scene, wearing a sophisticated party outfit, with champagne glasses clinking and elegant decorations'
     };
 
-    // Generate cartoon with Gemini-3-Pro-Image (handles vision + generation)
-    const prompt = `Transform this person's photo into a festive New Year's 2025 cartoon while keeping them completely recognizable. ${stylePrompts[style]}. Maintain their exact facial features, hairstyle, and appearance. Bright vibrant cartoon style, cheerful NYE celebration atmosphere, professional digital art.`;
+    // Generate cartoon using FLUX.1.1-pro with image input
+    const prompt = `Transform this into a festive New Year's 2025 cartoon. ${stylePrompts[style]}. Keep the character/person completely recognizable. Bright vibrant cartoon style, cheerful NYE celebration, confetti, balloons, 2025 decorations, professional digital art.`;
     
-    console.log('Calling Together.ai Gemini-3-Pro-Image...');
+    console.log('Calling Together.ai FLUX.1.1-pro...');
     const imageResponse = await fetch('https://api.together.xyz/v1/images/generations', {
       method: 'POST',
       headers: {
@@ -47,11 +47,13 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'google/gemini-3-pro-image',
+        model: 'black-forest-labs/FLUX.1.1-pro',
         prompt: prompt,
-        image: image,
+        image_url: image,
+        prompt_strength: 0.7,
         width: 1024,
-        height: 1024
+        height: 1024,
+        steps: 28
       })
     });
 
