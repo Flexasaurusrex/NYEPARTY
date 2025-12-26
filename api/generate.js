@@ -69,72 +69,85 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Build prompt with video game mascot style
-    const prompt = `You are generating a Party Puff — a mischievous New Year's Eve mascot inspired by a user's PFP.
+    // Build final video game character prompt
+    const prompt = `You are generating an image using FLUX 1.1 Pro via Replicate.
 
-STYLE LOCK (CRITICAL — DO NOT DEVIATE):
-Stylized video game mascot portrait.
-Use visual intent aligned with:
+IMPORTANT — COLOR PALETTE IS LOCKED.
+Primary color: ${primaryColor} (${paletteHex[0]})
+Secondary color: ${secondaryColor} (${paletteHex[1]})
+Accent color: ${accentColor} (${paletteHex[2]})
+These colors must dominate the character's body, details, and overall identity.
+Do NOT replace them with generic palettes or default colors.
+
+---
+
+CORE STYLE (LOCKED)
+Stylized video game mascot character
 - game character
-- mascot
+- mascot creature
 - character icon
+- bold shapes
 - clean shading
 - flat lighting
 - bold colors
-- simple forms
-- expressive face
-- readable silhouette
-- icon-first design
+- illustrated 2D look
 
-This should feel like:
-- an indie game mascot
-- a console-era character icon
-- something readable at 128×128
-- something a user would confidently set as their PFP
+DO NOT use:
+cinematic, realistic, painterly, 3D render, ultra-detailed, soft lighting
 
-CHARACTER DESIGN:
-- The character is a Party Puff: a round, orb-like, blob-like mascot spirit
-- This is a ${speciesCue} with that specific vibe (stylistic flavor only, NOT realistic anatomy)
-- Simple, bold silhouette
-- Slightly chaotic, mischievous New Year's Eve energy
+---
 
-Expression should feel:
-- smug
-- cheeky
-- playful
-- celebratory
-- "oops, I caused some trouble"
+CHARACTER ENERGY
+Mischievous, chaotic New Year's spirit
+Expressive face
+Dynamic pose
+Mid-action
+Feels like an unlockable character or enemy skin
+NOT wholesome
+NOT calm
+NOT static
 
-This is mischief, not madness.
+---
 
-NYE PROP ANCHOR (REQUIRED):
-The Party Puff must include ONE clearly visible New Year's Eve prop, physically embodied by the character.
-Choose ONE:
-- holding a lit sparkler
-- wearing a party hat
-- holding a small confetti cannon
+PARTY PUFF CONCEPT
+A round, energetic spirit creature made of New Year's chaos.
+Playful troublemaker.
+Chaotic but fun.
+Video-game-ready mascot.
+This is a ${speciesCue} with that specific vibe (stylistic cue, not literal animal).
 
-The prop must be physically attached or held.
-Background sparkles/fireworks are allowed, but not a substitute for the prop.
+---
 
-COLOR INHERITANCE (MANDATORY):
-- Dominant color → main body MUST be ${primaryColor}
-- Secondary color → accents (eyes, highlights, sparkler glow, prop details, outline accents) use ${secondaryColor}
-- Additional accent color for sparkles/effects: ${accentColor}
+NYE PROP ANCHOR (REQUIRED — 1 OR 2 ONLY)
+The character must clearly interact with:
+- sparkler
+- champagne spray
+- party hat
+- confetti cannon
 
-The user should immediately think: "That's my color vibe."
-The Party Puff body MUST be ${primaryColor}.
+Props must feel active, not decorative.
 
-COMPOSITION RULES:
-- Centered character
-- Neutral or dark background
-- Clean framing for circular crop
-- No busy foreground clutter
-- Background chaos (confetti, fireworks, sparkles) should support, not overwhelm
+---
 
-The body MUST be ${primaryColor}. This is critical.`;
+COMPOSITION RULES
+- Full body visible
+- Character is the clear focus
+- Visible ground or environment
+- Fireworks, confetti, motion effects allowed
+- Background must harmonize with the PRIMARY color ${primaryColor}
+- No plain white or gray backgrounds
 
-    const negativePrompt = `cute, kawaii, cinematic, highly detailed, photorealistic, furry realism, Pixar, Disney style, Unreal Engine, cinematic render, 3D render look, concept art, dramatic lighting, depth of field, micro-texture noise, painterly, illustration-heavy, humans, humanoid proportions, realistic animals, fur realism, horror aesthetics, excessive teeth, hyper-detailed textures, screaming, rage, manic insanity, grotesque expressions, beige, cream, pastel pink unless specified, text, logo, watermark`;
+---
+
+FINAL INTENT
+This should look like:
+"I unlocked a chaotic NYE character skin in a video game."
+NOT:
+"I generated a logo or brand mark."
+
+The character body MUST be ${primaryColor}.`;
+
+    const negativePrompt = `logo, emblem, badge, sticker, floating head, portrait-only, cute, kawaii, wholesome, cinematic lighting, realistic fur, 3D render, Pixar, Disney, neutral background, beige, cream, pastel pink unless specified, text, watermark, extra limbs, extra eyes, extra faces, human anatomy`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
