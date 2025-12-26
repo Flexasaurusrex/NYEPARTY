@@ -28,31 +28,52 @@ module.exports = async function handler(req, res) {
     console.log('Species cue:', speciesCue);
     console.log('Palette:', paletteHex);
 
-    // Build prompt with extracted palette and species cue
-    const palette = paletteHex.join(", ");
+    // Extract individual colors from palette
+    const primaryColor = paletteHex[0] || '#FF69B4';
+    const secondaryColor = paletteHex[1] || '#FFD700';
+    const accentColor = paletteHex[2] || '#87CEEB';
     
-    const prompt = `Create a single, ultra-cute New Year's Eve mascot character called a ${speciesCue}. The mascot is a round, soft, chubby 'puff' creature with clean cartoon linework, simple shapes, and exactly TWO eyes. It must feel like an irresistible sticker / avatar icon.
+    console.log('Primary color:', primaryColor);
+    console.log('Secondary color:', secondaryColor);
+    console.log('Accent color:', accentColor);
+    
+    // Build prompt with ACTUAL color values injected
+    const prompt = `Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
+The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
 
-CRITICAL COLOR MATCHING: Use this exact palette derived from the user's PFP as the ONLY main colors: ${palette}. Apply it like this:
-- Primary body color = first palette color
-- Secondary accents (cheeks, spots, belly, outline accents) = second palette color
-- Accessories (party hat/noisemaker/bowtie) = third palette color
-- Sparkles/confetti/highlight glows = fourth palette color (if provided)
-Do NOT introduce random new dominant colors outside the palette.
+COLOR RULES (STRICT):
+- The body color MUST be based on ${primaryColor}.
+- Secondary details MUST use ${secondaryColor}.
+- Small accents ONLY may use ${accentColor}.
+- Do NOT introduce any new dominant colors.
 
-NYE PARTY ENERGY: Add high 'razzamatazz' celebration elements around the mascot: confetti burst, glitter sparkles, small fireworks twinkles, bokeh light orbs, festive glow halo, and one fun party prop (party hat or party blower). Make it feel like the mascot is celebrating New Year's Eve HARD — joyful, festive, iconic.
+STYLE RULES:
+- Flat-shaded, soft gradients only.
+- Smooth outlines.
+- No realism, no painterly texture, no fur unless explicitly implied by the species cue.
+- Exactly two eyes.
+- One mouth.
+- No extra limbs, faces, or features.
 
-STYLE: clean 2D cartoon mascot, smooth shading, crisp outlines, high polish, centered composition, 1:1 square avatar, simple background (subtle gradient or soft bokeh) that also respects the palette.
+NYE DETAILS:
+- One small party hat OR one festive accessory (not both).
+- Subtle sparkles or confetti around the character.
+- Clean, sticker-like composition.
+- Neutral or soft background that does NOT overpower the character.
 
-HARD CONSTRAINTS:
-- exactly two eyes
-- no extra faces, no extra limbs, no uncanny details
-- no realistic human portrait
-- no text, no letters, no numbers
-- no gore, no creepy, no nightmare fuel
-- keep it cute, friendly, and clean`;
+COMPOSITION:
+- Centered character
+- 1:1 aspect ratio
+- High clarity, no motion blur
+- Friendly, joyful expression
 
-    const negativePrompt = `photorealistic, realistic, human, portrait, uncanny, horror, creepy, nightmare, extra eyes, multiple faces, deformed, mutated, extra limbs, hands, fingers, teeth close-up, gore, blood, text, letters, numbers, watermark, logo, messy lines, lowres, blurry, grainy, bad anatomy, disproportionate features`;
+IMPORTANT:
+This must feel PERSONAL because of the color palette and species cue.
+Avoid generic pastel blobs.
+Avoid random color choices.
+Avoid default "cute mascot" tropes unless they match the given palette.`;
+
+    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
