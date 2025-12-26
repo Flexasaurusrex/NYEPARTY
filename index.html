@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYE Party Animal PFP Converter 🎉🦖</title>
+    <title>NYE PFP Glow-Up 2025 ✨🎊</title>
     <link href="https://fonts.googleapis.com/css2?family=Righteous&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -430,14 +430,14 @@
 
     <div class="container">
         <header>
-            <h1>🎊 NYE PARTY ANIMAL 🎊</h1>
-            <p class="subtitle">Turn your PFP into a festive party animal!</p>
+            <h1>🎊 NYE PFP GLOW-UP 🎊</h1>
+            <p class="subtitle">Transform your PFP into a premium NYE celebration</p>
         </header>
 
         <div class="main-card">
             <!-- Info Box -->
             <div class="info-box">
-                <strong>✨ How it works:</strong> Upload your Farcaster PFP, choose a party vibe, and transform into a NYE Party Animal! Powered by <a href="https://replicate.com" target="_blank">Replicate</a>
+                <strong>✨ How it works:</strong> Upload your Farcaster PFP and transform it into a premium New Year's Eve celebration portrait with cinematic lighting, confetti, and festive vibes. Your PFP stays recognizable—just gets an iconic NYE glow-up! Powered by <a href="https://replicate.com" target="_blank">SDXL on Replicate</a>
             </div>
 
             <!-- Upload Section -->
@@ -454,45 +454,22 @@
                 </div>
             </div>
 
-            <!-- Style Selection -->
-            <div class="style-section">
-                <label class="upload-label">Choose Your Party Vibe</label>
-                <div class="style-grid">
-                    <div class="style-option selected" data-style="classic">
-                        <span class="style-emoji">🎩</span>
-                        <div class="style-name">Classic Party</div>
-                    </div>
-                    <div class="style-option" data-style="sparkly">
-                        <span class="style-emoji">✨</span>
-                        <div class="style-name">Sparkly Glow</div>
-                    </div>
-                    <div class="style-option" data-style="fireworks">
-                        <span class="style-emoji">🎆</span>
-                        <div class="style-name">Fireworks Energy</div>
-                    </div>
-                    <div class="style-option" data-style="champagne">
-                        <span class="style-emoji">🍾</span>
-                        <div class="style-name">Champagne Class</div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Generate Button -->
             <button class="generate-btn" id="generateBtn">
-                🎉 Become a Party Animal 🎉
+                ✨ Get Your NYE Glow-Up ✨
             </button>
 
             <!-- Loading State -->
             <div class="loading" id="loading">
                 <div class="loader"></div>
-                <div class="loading-text">Creating your festive masterpiece...</div>
+                <div class="loading-text">Creating your premium NYE portrait...</div>
             </div>
 
             <!-- Result Section -->
             <div class="result-section" id="resultSection">
                 <img id="resultImage" class="result-image" alt="Result">
                 <button class="download-btn" id="downloadBtn">
-                    💾 Download Your Party Animal PFP
+                    💾 Download Your NYE Glow-Up
                 </button>
             </div>
         </div>
@@ -500,7 +477,6 @@
 
     <script>
         let uploadedImage = null;
-        let selectedStyle = 'classic';
 
         // Initialize background animation
         function initBackgroundAnimation() {
@@ -576,17 +552,6 @@
             reader.readAsDataURL(file);
         }
 
-        // Style selection
-        document.querySelectorAll('.style-option').forEach(option => {
-            option.addEventListener('click', () => {
-                document.querySelectorAll('.style-option').forEach(opt => 
-                    opt.classList.remove('selected')
-                );
-                option.classList.add('selected');
-                selectedStyle = option.dataset.style;
-            });
-        });
-
         // Generate button
         const generateBtn = document.getElementById('generateBtn');
         const loading = document.getElementById('loading');
@@ -611,8 +576,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        image: uploadedImage,
-                        style: selectedStyle
+                        image: uploadedImage
                     })
                 });
 
@@ -645,7 +609,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `party-animal-pfp-${Date.now()}.png`;
+            a.download = `nye-glowup-${Date.now()}.png`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
