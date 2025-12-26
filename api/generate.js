@@ -28,29 +28,28 @@ export default async function handler(req, res) {
     console.log('Style:', style);
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
-    // Base prompt - premium NYE transformation while preserving identity
-    const basePrompt = "Transform the uploaded PFP into an ultra-premium New Year's Eve celebration portrait while preserving the original character's identity, silhouette, pose, and key defining features. Upgrade the look with dramatic cinematic lighting, celebratory atmosphere, confetti, bokeh highlights, sparkles, and premium styling. High-quality illustration or polished digital art style, crisp clean details, iconic profile-picture composition, centered head-and-shoulders framing, sharp focus on the subject.";
+    // Base prompt - TRANSFORMATIONAL (scene + wardrobe + lighting rewrite)
+    const basePrompt = "Transform the uploaded PFP into a dramatic New Year's Eve celebration portrait while keeping the same character recognizable. Mandatory changes: – Upgrade the outfit to a New Year's Eve–appropriate look (partywear, evening jacket, luxury styling) – Change the environment to a celebratory NYE scene (nighttime, lights, energy, atmosphere) – Introduce bold cinematic lighting different from the original image. Preserve the subject's identity, facial features, pose, and general color palette, but do not keep the original background or lighting unchanged. High-impact illustration or polished digital art, centered head-and-shoulders portrait, iconic PFP composition, sharp focus on the subject.";
     
-    // Conditional handling - prevents unwanted transformations
-    // Note: In production, you'd detect the PFP type. For now, using generic preservation.
-    const conditionalLine = "Keep the subject clearly recognizable with the same character design and species.";
+    // Conditional for non-human PFPs
+    const conditionalLine = "If the character is non-human, preserve the same character design exactly; only upgrade lighting, environment, and celebratory styling.";
     
-    // Global negative prompt - MANDATORY
+    // Global negative prompt
     const negativePrompt = "text, words, numbers, watermark, logo, signature, blurry, low detail, bad anatomy, extra limbs, deformed, mutated, different character, different face, different species, nsfw, gore, scary, horror, lowres, jpeg artifacts, messy background, cropped head, out of frame";
 
-    // Vibe-specific suffixes (premium styling approach)
+    // Vibe-specific suffixes - STRUCTURAL not cosmetic
     const vibeSuffixes = {
-      classic: 'Elegant black-and-gold New Year\'s Eve styling, tasteful party crown or hat, celebratory confetti burst, soft warm bokeh lights, refined festive mood, premium poster aesthetic.',
-      sparkly: 'Radiant glitter highlights, shimmering particles, prismatic light flares, jewel-toned reflections, glowing rim light, high-fashion New Year\'s Eve portrait lighting.',
-      fireworks: 'Huge colorful fireworks exploding in the background sky, vivid streaks and bursts, strong rim lighting from fireworks, dynamic celebration atmosphere, motion sparkle trails, bold high-energy contrast.',
-      champagne: 'Luxury lounge New Year\'s Eve vibe, warm golden lighting, champagne reflections, crystal glass bokeh, elegant attire, sophisticated celebration mood, premium cinematic portrait.'
+      classic: 'Classic New Year\'s Eve party scene. Formal party attire, elevated styling, celebratory confetti in motion, warm gold-and-black color accents, soft crowd-light bokeh in the background. Lighting and environment must differ clearly from the original image.',
+      sparkly: 'Glamorous NYE glow-up. High-fashion lighting setup, intense rim light, glittering particles interacting with the subject, prismatic reflections on glasses and jewelry, radiant sparkle atmosphere. Scene should feel dramatically more luminous than the original.',
+      fireworks: 'Fireworks celebration scene. Large colorful fireworks filling the night sky behind the subject, strong colored rim light cast from fireworks, dynamic lighting shifts across the face, visible motion energy and celebration intensity. Replace any static background with an active night celebration scene.',
+      champagne: 'Luxury NYE champagne celebration. Upscale evening attire, warm golden lighting, reflections from crystal glassware, elegant lounge or rooftop party setting. Scene should feel premium and cinematic, not minimal.'
     };
 
     // Construct final prompt
     const prompt = `${basePrompt} ${conditionalLine} ${vibeSuffixes[style]}`;
     
-    // Settings per spec: strength 0.60-0.68, steps 35-40, guidance 6.0-7.5
-    const strength = 0.60;
+    // Settings: need to cross 0.65 to force wardrobe/background change
+    const strength = 0.68;
     const steps = 38;
     const guidance = 6.5;
     
