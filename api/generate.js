@@ -28,16 +28,22 @@ export default async function handler(req, res) {
     console.log('Style:', style);
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
-    // Style prompts
+    // Global prefix - preserves identity
+    const globalPrefix = "Preserve the original character's identity, face shape, hairstyle, colors, and recognizable features from the input image. Keep the same character centered and framed as a profile picture. Do not change the character's species or core design. Transform the character into a joyful New Year's Eve party version while maintaining recognizability.";
+    
+    // Global negative prompt
+    const negativePrompt = "blurry, low quality, distorted face, extra limbs, bad hands, deformed fingers, cross-eye, duplicate face, cropped head, out of frame, watermark, logo, text, letters, numbers, scary, uncanny, overexposed, messy background";
+
+    // Production-ready style prompts
     const stylePrompts = {
-      classic: 'wearing a glittery party hat with streamers, holding party blowers and confetti, with balloons and "2025" decorations in the background',
-      sparkly: 'surrounded by sparklers and glitter, wearing a glamorous New Years crown, with champagne bubbles and golden confetti floating around',
-      fireworks: 'with colorful fireworks exploding behind them, wearing festive sunglasses, holding sparklers, vibrant celebration atmosphere',
-      champagne: 'in an elegant champagne celebration scene, wearing a sophisticated party outfit, with champagne glasses clinking and elegant decorations'
+      classic: 'Wearing a glittery New Year\'s Eve party hat with colorful streamers, holding a party blower and loose confetti visible in the foreground. Festive balloons and soft celebratory lights in the background. Joyful expression, bright party atmosphere. No readable text.',
+      sparkly: 'Surrounded by glowing sparklers and floating golden glitter, wearing a glamorous New Year\'s crown. Champagne bubbles rising through the scene, warm golden light, magical celebratory atmosphere. Sparkles clearly visible around the character\'s head and shoulders.',
+      fireworks: 'Colorful fireworks bursting in the night sky behind the character, soft glow lighting their face. Wearing festive party sunglasses and holding a lit sparkler. Vibrant New Year\'s celebration atmosphere, energetic but clean composition.',
+      champagne: 'Elegant New Year\'s Eve champagne celebration. Wearing a sophisticated party outfit. Two champagne glasses clinking near the character, soft golden bokeh lights in the background. Refined, celebratory mood, warm highlights.'
     };
 
     // Use Replicate's img2img for actual transformation
-    const prompt = `Festive New Year's 2025 cartoon style illustration. ${stylePrompts[style]}. Bright vibrant cartoon colors, cheerful celebration atmosphere, confetti, balloons, sparklers, 2025 decorations, professional digital art, animated movie style`;
+    const prompt = `${globalPrefix} ${stylePrompts[style]}`;
     
     console.log('Starting Replicate prediction...');
     
@@ -54,9 +60,10 @@ export default async function handler(req, res) {
         input: {
           image: image,
           prompt: prompt,
-          strength: 0.4,
-          num_inference_steps: 30,
-          guidance_scale: 7.5
+          negative_prompt: negativePrompt,
+          strength: 0.6,
+          num_inference_steps: 40,
+          guidance_scale: 6.5
         }
       })
     });
