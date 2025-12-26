@@ -1,3 +1,45 @@
+// Helper function to extract dominant colors from base64 image
+async function extractDominantColors(dataURL) {
+  // Convert base64 to buffer and sample colors
+  const base64Data = dataURL.replace(/^data:image\/\w+;base64,/, '');
+  const buffer = Buffer.from(base64Data, 'base64');
+  
+  // Simple color extraction: sample pixels and find most common
+  // For a quick implementation, we'll analyze the data pattern
+  const colorMap = new Map();
+  
+  // Sample every Nth byte to get color distribution
+  for (let i = 0; i < buffer.length - 2; i += 100) {
+    const r = buffer[i];
+    const g = buffer[i + 1];
+    const b = buffer[i + 2];
+    
+    // Quantize to reduce color space
+    const qr = Math.floor(r / 32) * 32;
+    const qg = Math.floor(g / 32) * 32;
+    const qb = Math.floor(b / 32) * 32;
+    
+    const colorKey = `${qr},${qg},${qb}`;
+    colorMap.set(colorKey, (colorMap.get(colorKey) || 0) + 1);
+  }
+  
+  // Get top 4 colors
+  const sortedColors = Array.from(colorMap.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([rgb]) => {
+      const [r, g, b] = rgb.split(',').map(Number);
+      return `rgb(${r}, ${g}, ${b})`;
+    });
+  
+  return {
+    primary: sortedColors[0] || 'rgb(100, 200, 100)',
+    secondary: sortedColors[1] || 'rgb(200, 100, 150)',
+    accent: sortedColors[2] || 'rgb(150, 150, 255)',
+    highlight: sortedColors[3] || 'rgb(255, 200, 100)'
+  };
+}
+
 module.exports = async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -27,7 +69,11 @@ module.exports = async function handler(req, res) {
     console.log('Starting Party Puff generation with FLUX...');
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
-    // PARTY PUFF PROMPT - Optimized for FLUX 1.1 Pro
+    // Extract colors from uploaded image
+    const colors = await extractDominantColors(image);
+    console.log('Extracted colors:', colors);
+
+    // PARTY PUFF PROMPT - Optimized for FLUX 1.1 Pro with color injection
     const prompt = `Create a cute, friendly cartoon mascot called a "Party Puff" celebrating New Year's Eve.
 The Party Puff MUST follow these rules:
 - One round, circular body
@@ -55,9 +101,11 @@ NEW YEAR'S EVE THEME:
 - Festive lighting
 - ONE simple party accessory only (party hat OR glasses OR party horn)
 - Joyful, happy expression
-COLOR INSPIRATION:
-- Use the uploaded image ONLY to inspire the color palette and glow accents
-- Do NOT copy characters, faces, shapes, or symbols from the uploaded image
+COLOR PALETTE (VERY IMPORTANT):
+- Primary body color: ${colors.primary}
+- Secondary/accent colors: ${colors.secondary} and ${colors.accent}
+- Glow and sparkle colors should use ${colors.highlight}
+- Use these EXACT colors for the Party Puff character
 COMPOSITION:
 - Centered character
 - Plain or softly glowing background
