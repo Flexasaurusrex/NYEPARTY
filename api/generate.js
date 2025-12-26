@@ -28,52 +28,80 @@ module.exports = async function handler(req, res) {
     console.log('Species cue:', speciesCue);
     console.log('Palette:', paletteHex);
 
-    // Extract individual colors from palette
-    const primaryColor = paletteHex[0] || '#FF69B4';
-    const secondaryColor = paletteHex[1] || '#FFD700';
-    const accentColor = paletteHex[2] || '#87CEEB';
+    // Convert hex to color names that FLUX understands
+    function hexToColorName(hex) {
+      const rgb = {
+        r: parseInt(hex.slice(1, 3), 16),
+        g: parseInt(hex.slice(3, 5), 16),
+        b: parseInt(hex.slice(5, 7), 16)
+      };
+      
+      // Determine color name based on dominant channel
+      if (rgb.r < 50 && rgb.g < 50 && rgb.b < 50) return 'black';
+      if (rgb.r > 200 && rgb.g > 200 && rgb.b > 200) return 'white';
+      
+      if (rgb.g > rgb.r && rgb.g > rgb.b) {
+        if (rgb.g > 150) return rgb.g > 200 ? 'bright green' : 'green';
+        return 'dark green';
+      }
+      if (rgb.r > rgb.g && rgb.r > rgb.b) {
+        if (rgb.r > 150) return 'red';
+        return 'dark red';
+      }
+      if (rgb.b > rgb.r && rgb.b > rgb.g) {
+        if (rgb.b > 150) return 'blue';
+        return 'dark blue';
+      }
+      
+      // Mixed colors
+      if (rgb.r > 150 && rgb.g > 150) return 'yellow';
+      if (rgb.r > 150 && rgb.b > 150) return 'pink';
+      if (rgb.g > 150 && rgb.b > 150) return 'cyan';
+      
+      return 'gray';
+    }
     
-    console.log('Primary color:', primaryColor);
-    console.log('Secondary color:', secondaryColor);
-    console.log('Accent color:', accentColor);
+    const primaryColor = hexToColorName(paletteHex[0] || '#FF69B4');
+    const secondaryColor = hexToColorName(paletteHex[1] || '#FFD700');
+    const accentColor = hexToColorName(paletteHex[2] || '#87CEEB');
     
-    // Build prompt with ACTUAL color values injected
+    console.log('Primary color:', primaryColor, '(from', paletteHex[0], ')');
+    console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
+    console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
+    
+    // Build prompt with COLOR NAMES not hex codes
     const prompt = `Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
 The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
 
-COLOR RULES (STRICT):
-- The body color MUST be based on ${primaryColor}.
-- Secondary details MUST use ${secondaryColor}.
-- Small accents ONLY may use ${accentColor}.
-- Do NOT introduce any new dominant colors.
+COLOR RULES (CRITICAL - FOLLOW EXACTLY):
+- The main body color MUST be ${primaryColor}. Make the entire body ${primaryColor}.
+- Secondary details and accents MUST use ${secondaryColor}.
+- Small highlights ONLY may use ${accentColor}.
+- The character should be PRIMARILY ${primaryColor} in color.
+- Do NOT use random pastels or beige unless that is the specified color.
 
 STYLE RULES:
 - Flat-shaded, soft gradients only.
 - Smooth outlines.
-- No realism, no painterly texture, no fur unless explicitly implied by the species cue.
+- No realism, no painterly texture.
 - Exactly two eyes.
 - One mouth.
 - No extra limbs, faces, or features.
 
 NYE DETAILS:
-- One small party hat OR one festive accessory (not both).
+- One small party hat OR one festive accessory.
 - Subtle sparkles or confetti around the character.
 - Clean, sticker-like composition.
-- Neutral or soft background that does NOT overpower the character.
+- Simple background.
 
 COMPOSITION:
 - Centered character
 - 1:1 aspect ratio
-- High clarity, no motion blur
 - Friendly, joyful expression
 
-IMPORTANT:
-This must feel PERSONAL because of the color palette and species cue.
-Avoid generic pastel blobs.
-Avoid random color choices.
-Avoid default "cute mascot" tropes unless they match the given palette.`;
+The body MUST be ${primaryColor}. This is the most important rule.`;
 
-    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character`;
+    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, beige, cream, pastel pink, random colors, default colors`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
