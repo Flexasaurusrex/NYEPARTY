@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Party Puffs - NYE Mascot Generator 🎉</title>
     <link href="https://fonts.googleapis.com/css2?family=Righteous&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="palette-extractor.js"></script>
     <style>
         * {
             margin: 0;
@@ -581,6 +582,13 @@
             resultSection.style.display = 'none';
 
             try {
+                // Extract palette and species cue from uploaded image
+                console.log('Extracting palette and species cue...');
+                const { paletteHex, speciesCue, stats } = await extractPaletteAndSpecies(uploadedImage);
+                console.log('Palette:', paletteHex);
+                console.log('Species cue:', speciesCue);
+                console.log('Stats:', stats);
+
                 // Call the backend API
                 const response = await fetch('/api/generate', {
                     method: 'POST',
@@ -588,7 +596,9 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        image: uploadedImage
+                        image: uploadedImage,
+                        paletteHex: paletteHex,
+                        speciesCue: speciesCue
                     })
                 });
 
