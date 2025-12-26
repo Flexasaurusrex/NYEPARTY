@@ -7,7 +7,8 @@
  * Preserves original image pixel-perfect, adds festive overlays only
  */
 
-async function applyNYECompositing(imageDataUrl) {
+async function applyNYECompositing(imageDataUrl, mode = 'standard') {
+  // mode: 'standard' or 'face-safe'
   // Load original image
   const img = await loadImage(imageDataUrl);
   
@@ -18,32 +19,36 @@ async function applyNYECompositing(imageDataUrl) {
   const ctx = canvas.getContext('2d');
   
   // === LAYER 1: SUBTLE BACKGROUND TINT ===
-  // Apply first so it's behind everything
   applyBackgroundTint(ctx, canvas.width, canvas.height);
   
   // === LAYER 2: GLOW HALO ===
-  // Soft glow behind the subject
-  applyGlowHalo(ctx, img);
+  if (mode === 'face-safe') {
+    // Outer glow only, don't overlay the face
+    applyOuterGlow(ctx, img);
+  } else {
+    // Standard glow behind subject
+    applyGlowHalo(ctx, img);
+  }
   
   // === LAYER 3: BASE LAYER (ORIGINAL PFP) ===
-  // Draw original image pixel-perfect, unmodified
   ctx.drawImage(img, 0, 0);
   
-  // === LAYER 4: BACKGROUND CONFETTI ===
-  // Confetti behind subject (depth layer 1)
-  applyConfettiLayer(ctx, canvas.width, canvas.height, 'background');
+  // === LAYER 4 & 5: CONFETTI ===
+  const confettiExclusionZone = mode === 'face-safe' ? 0.5 : 0.3; // Larger exclusion for face-safe
+  applyConfettiLayer(ctx, canvas.width, canvas.height, 'background', confettiExclusionZone);
+  applyConfettiLayer(ctx, canvas.width, canvas.height, 'foreground', confettiExclusionZone);
   
-  // === LAYER 5: FOREGROUND CONFETTI ===
-  // Confetti in front (depth layer 2)
-  applyConfettiLayer(ctx, canvas.width, canvas.height, 'foreground');
+  // === LAYER 6: SPARKLES ===
+  if (mode === 'face-safe') {
+    // Corners only for face-safe
+    applyCornerSparkles(ctx, canvas.width, canvas.height);
+  } else {
+    // Standard edge sparkles
+    applySparkles(ctx, img, canvas.width, canvas.height);
+  }
   
-  // === LAYER 6: SPARKLES / STAR BURSTS ===
-  // Edge sparkles and accent glows
-  applySparkles(ctx, img, canvas.width, canvas.height);
-  
-  // === LAYER 7: OPTIONAL MOTION ACCENTS ===
-  // Subtle energy streaks
-  applyMotionAccents(ctx, canvas.width, canvas.height);
+  // === LAYER 7: MOTION ACCENTS ===
+  applyMotionAccents(ctx, canvas.width, canvas.height, mode);
   
   return canvas.toDataURL('image/png');
 }
@@ -110,7 +115,7 @@ function applyGlowHalo(ctx, img) {
  * LAYER 4 & 5: Confetti
  * Multi-depth confetti particles
  */
-function applyConfettiLayer(ctx, width, height, depth) {
+function applyConfettiLayer(ctx, width, height, depth, exclusionRatio = 0.3) {
   const confettiCount = depth === 'background' ? 15 : 10;
   const confettiColors = [
     '#FFD700', // Gold
@@ -131,11 +136,11 @@ function applyConfettiLayer(ctx, width, height, depth) {
     const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
     const opacity = depth === 'background' ? 0.4 + Math.random() * 0.3 : 0.6 + Math.random() * 0.4;
     
-    // Avoid center area (face region)
+    // Avoid center area (face region) - adjustable exclusion zone
     const centerX = width / 2;
     const centerY = height / 2;
     const distFromCenter = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
-    const centerRadius = Math.min(width, height) * 0.3;
+    const centerRadius = Math.min(width, height) * exclusionRatio;
     
     if (distFromCenter < centerRadius) {
       continue; // Skip confetti too close to center
@@ -197,12 +202,15 @@ function applySparkles(ctx, img, width, height) {
  * LAYER 7: Motion Accents
  * Subtle curved streaks for energy
  */
-function applyMotionAccents(ctx, width, height) {
-  const accentCount = 3;
+function applyMotionAccents(ctx, width, height, mode = 'standard') {
+  const accentCount = mode === 'face-safe' ? 2 : 3;
   
   for (let i = 0; i < accentCount; i++) {
-    // Random position on edges
-    const startX = Math.random() < 0.5 ? Math.random() * width * 0.2 : width - Math.random() * width * 0.2;
+    // For face-safe, keep streaks on outer edges only
+    const edgeMargin = mode === 'face-safe' ? 0.15 : 0.2;
+    const startX = Math.random() < 0.5 ? 
+      Math.random() * width * edgeMargin : 
+      width - Math.random() * width * edgeMargin;
     const startY = Math.random() * height;
     
     ctx.save();
