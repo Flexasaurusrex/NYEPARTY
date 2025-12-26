@@ -73,10 +73,14 @@ module.exports = async function handler(req, res) {
     const colors = await extractDominantColors(image);
     console.log('Extracted colors:', colors);
 
-    // PARTY PUFF PROMPT - Optimized for FLUX 1.1 Pro with color injection
+    // PARTY PUFF PROMPT - with強 color enforcement
     const prompt = `Create a cute, friendly cartoon mascot called a "Party Puff" celebrating New Year's Eve.
+
+CRITICAL COLOR REQUIREMENT - MUST FOLLOW EXACTLY:
+The Party Puff's body MUST be colored ${colors.primary}. This is the PRIMARY body color extracted from the user's image and MUST be used. The Party Puff should be primarily this color: ${colors.primary}.
+
 The Party Puff MUST follow these rules:
-- One round, circular body
+- One round, circular body colored ${colors.primary}
 - EXACTLY two eyes
 - EXACTLY one small mouth
 - No nose
@@ -84,10 +88,11 @@ The Party Puff MUST follow these rules:
 - No extra eyes
 - No extra limbs
 - Simple, clean silhouette
-- Smooth flat colors
+- Smooth flat colors with the primary color being ${colors.primary}
 - Clear black or dark outline
 - Cute, wholesome, sticker-like appearance
 The Party Puff is non-human and looks like a modern game or app mascot.
+
 STYLE:
 - Clean cartoon illustration
 - Vector-style shading
@@ -95,21 +100,20 @@ STYLE:
 - No realism
 - No painterly brush strokes
 - No fur, wrinkles, or organic detail
+
 NEW YEAR'S EVE THEME:
-- Colorful confetti floating around
-- Sparkles and soft glow effects
+- Colorful confetti floating around (can use ${colors.secondary}, ${colors.accent})
+- Sparkles and soft glow effects using ${colors.highlight}
 - Festive lighting
 - ONE simple party accessory only (party hat OR glasses OR party horn)
 - Joyful, happy expression
-COLOR PALETTE (VERY IMPORTANT):
-- Primary body color: ${colors.primary}
-- Secondary/accent colors: ${colors.secondary} and ${colors.accent}
-- Glow and sparkle colors should use ${colors.highlight}
-- Use these EXACT colors for the Party Puff character
+
 COMPOSITION:
 - Centered character
 - Plain or softly glowing background
-- Designed to look great as a circular profile picture`;
+- Designed to look great as a circular profile picture
+
+REMEMBER: The main body color MUST be ${colors.primary}!`;
 
     // NEGATIVE PROMPT - FLUX respects this very well
     const negativePrompt = `realistic, photorealistic, horror, creepy, scary, abstract, surreal, extra eyes, extra faces, multiple mouths, deformed anatomy, fur, wrinkles, texture noise, painterly, sketchy, complex background, clutter, kirby, copyrighted character`;
