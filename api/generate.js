@@ -63,23 +63,23 @@ Composition:
     
     console.log('Calling Imagen 3 API...');
     
-    // Call Google Imagen 3 API with key as query param
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${process.env.GOOGLE_AI_KEY}`;
+    // Google AI Imagen API - correct format based on SDK
+    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:generateImages';
     
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-goog-api-key': process.env.GOOGLE_AI_KEY
       },
       body: JSON.stringify({
-        instances: [{
-          prompt: prompt,
-          negativePrompt: negativePrompt,
-        }],
-        parameters: {
-          sampleCount: 1,
+        model: 'imagen-3.0-generate-001',
+        prompt: prompt,
+        config: {
+          numberOfImages: 1,
           aspectRatio: '1:1',
-          safetyFilterLevel: 'BLOCK_ONLY_HIGH',
+          negativePrompt: negativePrompt,
+          safetyFilterLevel: 'block_only_high',
           personGeneration: 'allow_adult'
         }
       })
@@ -98,15 +98,19 @@ Composition:
     const data = await response.json();
     console.log('Imagen 3 response received');
 
-    // Extract generated image from Vertex AI response format
-    if (!data.predictions || data.predictions.length === 0) {
-      console.error('No predictions in response:', JSON.stringify(data));
+    // Extract generated images (matches Python SDK: response.generated_images)
+    if (!data.generatedImages || data.generatedImages.length === 0) {
+      console.error('No generatedImages in response:', JSON.stringify(data));
       throw new Error('No images generated');
     }
 
-    // Imagen 3 returns base64 image in predictions array
-    const prediction = data.predictions[0];
-    const imageData = `data:image/png;base64,${prediction.bytesBase64Encoded}`;
+    // Get first generated image
+    const generatedImage = data.generatedImages[0];
+    
+    // Image data should be in _image_bytes or similar field
+    // Convert to base64 data URL
+    const imageBytes = generatedImage.bytesBase64Encoded || generatedImage._image_bytes;
+    const imageData = `data:image/png;base64,${imageBytes}`;
 
     console.log('Party Puff generated successfully!');
 
