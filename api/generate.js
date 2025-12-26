@@ -32,14 +32,15 @@ export default async function handler(req, res) {
       champagne: 'in an elegant champagne celebration scene, wearing a sophisticated party outfit, with champagne glasses clinking and elegant decorations'
     };
 
-    // Step 1: Analyze the image with Nano Banana
-    const analysisResponse = await fetch('https://nanobanana.ai/api/v1/chat/completions', {
+    // Step 1: Analyze the image with Nano Banana (Google AI Studio)
+    const analysisResponse = await fetch('https://api.nanobanana.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${process.env.GOOGLE_AI_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gemini-2.0-flash-exp',
         messages: [
           {
             role: 'user',
