@@ -51,8 +51,7 @@ export default async function handler(req, res) {
         prompt: prompt,
         image: image,
         width: 1024,
-        height: 1024,
-        n: 1
+        height: 1024
       })
     });
 
