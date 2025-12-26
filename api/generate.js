@@ -69,39 +69,58 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Build prompt with COLOR NAMES not hex codes
-    const prompt = `Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
-The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
+    // Build prompt with chaotic NYE energy
+    const prompt = `Create a New Year's Eve 2026-themed illustration of a cute ${speciesCue} character with simple, clean shapes and friendly proportions.
 
-COLOR RULES (CRITICAL - FOLLOW EXACTLY):
+CHARACTER COLOR (CRITICAL):
 - The main body color MUST be ${primaryColor}. Make the entire body ${primaryColor}.
-- Secondary details and accents MUST use ${secondaryColor}.
-- Small highlights ONLY may use ${accentColor}.
+- Secondary details MUST use ${secondaryColor}.
+- Maintain the original clean base palette, but add selective contrast spikes with gold accents, silver highlights, and pops of ${accentColor}.
 - The character should be PRIMARILY ${primaryColor} in color.
-- Do NOT use random pastels or beige unless that is the specified color.
 
-STYLE RULES:
-- Flat-shaded, soft gradients only.
-- Smooth outlines.
-- No realism, no painterly texture.
-- Exactly two eyes.
-- One mouth.
-- No extra limbs, faces, or features.
+CHARACTER STYLE:
+- Simple, round, chubby body with clean cartoon style
+- Exactly two eyes
+- One mouth
+- Smooth outlines
+- Flat-shaded with soft gradients
 
-NYE DETAILS:
-- One small party hat OR one festive accessory.
-- Subtle sparkles or confetti around the character.
-- Clean, sticker-like composition.
-- Simple background.
+SCENE ENERGY (CHAOTIC AND MESSY):
+The character must be actively doing something dumb or overwhelmed. Capture a candid moment in motion, not a clean portrait.
+
+The character is caught mid-action:
+* slipping on confetti
+* screaming as fireworks go off too close
+* struggling to hold accessories that are clearly too large
+* desperately dealing with messy NYE chaos
+
+MULTIPLE NYE ACCESSORIES (IMPERFECT AND AWKWARD):
+- Crooked or oversized party hat
+- Champagne flute that is half-spilled or tipping
+- Party poppers mid-explosion
+- Stupid novelty sunglasses (stars, "2026", pixel frames)
+- Clock showing 12:00 (midnight clearly visible)
+- Tiny disco ball (held, dangling, or awkwardly attached)
+- Fireworks being held incorrectly or too close
+- Confetti stuck to the character, face, and props — NOT floating cleanly
+
+RULE: Nothing should feel centered, symmetrical, balanced, or perfect. Accessories should overlap, tilt, slip, collide, or feel slightly too big. Confetti should cling awkwardly and unevenly.
+
+LIGHTING:
+Party lights hitting the character — energetic, celebratory, slightly chaotic. Metallic textures on accessories (gold, silver). Dynamic lighting without overwhelming the core design.
 
 COMPOSITION:
-- Centered character
+- Off-center, asymmetrical
+- Motion and imbalance
+- Humor and imperfection over cleanliness
 - 1:1 aspect ratio
-- Friendly, joyful expression
+- Joyful, dumb, slightly unhinged New Year's Eve energy
+
+Overall tone: These should feel like small celebratory objects people buy impulsively because they're funny, relatable, and perfectly imperfect.
 
 The body MUST be ${primaryColor}. This is the most important rule.`;
 
-    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, beige, cream, pastel pink, random colors, default colors`;
+    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, text, logo, watermark, signature, horror, creepy, distorted anatomy, beige, cream, pastel pink unless specified, random colors, centered composition, symmetrical, balanced, clean portrait, static pose, floating confetti, perfect accessories, minimal scene, boring`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
