@@ -24,43 +24,6 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required field: image' });
     }
 
-    console.log('Starting Party Puff generation with Imagen 3...');
-    console.log('Has GOOGLE_AI_KEY:', !!process.env.GOOGLE_AI_KEY);
-
-    // PARTY PUFF PROMPT - Optimized for Imagen 3
-    const prompt = `Create a cute, friendly cartoon mascot called a "Party Puff" celebrating New Year's Eve.
-The Party Puff is a simple, round, non-human character with:
-- a smooth circular body
-- EXACTLY two large friendly eyes
-- one small smiling mouth
-- no nose
-- no extra faces or features
-- clean, flat shapes
-- soft vector-style shading
-The character must look wholesome, adorable, and safe — like a modern game mascot or sticker.
-New Year's Eve theme:
-- colorful confetti floating around
-- soft glowing highlights
-- sparkles and celebratory light effects
-- a small festive accessory (party hat or glasses is okay)
-- joyful, energetic expression
-Color inspiration:
-- use the uploaded image ONLY to guide the color palette and glow accents
-- do NOT copy characters, faces, or shapes from the uploaded image
-Style:
-- clean cartoon illustration
-- smooth edges
-- no texture noise
-- no realism
-- no painterly brush strokes
-Composition:
-- centered character
-- clear silhouette
-- designed to look great as a profile picture`;
-    
-    // Negative prompt - simplified
-    const negativePrompt = `scary, creepy, horror, realistic, abstract, surreal, extra eyes, extra faces`;
-    
     console.log('Starting Party Puff generation with FLUX...');
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
