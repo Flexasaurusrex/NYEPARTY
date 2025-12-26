@@ -69,58 +69,80 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Build prompt with chaotic NYE energy
-    const prompt = `Create a New Year's Eve 2026-themed illustration of a cute ${speciesCue} character with simple, clean shapes and friendly proportions.
+    // Build prompt with chaotic spirit entity energy
+    const prompt = `Create a single "Party Puff" — a mischievous spirit-ball embodiment of chaotic New Year's Eve energy.
 
-CHARACTER COLOR (CRITICAL):
-- The main body color MUST be ${primaryColor}. Make the entire body ${primaryColor}.
-- Secondary details MUST use ${secondaryColor}.
-- Maintain the original clean base palette, but add selective contrast spikes with gold accents, silver highlights, and pops of ${accentColor}.
-- The character should be PRIMARILY ${primaryColor} in color.
+CONCEPT:
+Party Puffs are NOT mascots and NOT polite characters.
+They are chaotic NYE spirit entities — playful, unhinged, slightly dangerous, and having WAY too much fun.
+Think: Tarantino's "Four Rooms" energy in puffball spirit form.
 
-CHARACTER STYLE:
-- Simple, round, chubby body with clean cartoon style
-- Exactly two eyes
-- One mouth
-- Smooth outlines
-- Flat-shaded with soft gradients
+STYLE:
+- Round, soft, puffball creature
+- Cartoon / illustrated (not realistic)
+- Bold outlines, expressive shapes
+- High-contrast, cinematic lighting
+- Sticker-readable at small sizes
 
-SCENE ENERGY (CHAOTIC AND MESSY):
-The character must be actively doing something dumb or overwhelmed. Capture a candid moment in motion, not a clean portrait.
+COLOR RULE (CRITICAL — MUST FOLLOW):
+The Party Puff's PRIMARY body color MUST be ${primaryColor}.
+Secondary details must be lighter/darker variations of ${primaryColor} or use ${secondaryColor}.
+Accent sparks and highlights can use ${accentColor}.
+Color connection to the source PFP must be obvious at a glance.
+NO unrelated palettes. The puff MUST be ${primaryColor}.
 
-The character is caught mid-action:
-* slipping on confetti
-* screaming as fireworks go off too close
-* struggling to hold accessories that are clearly too large
-* desperately dealing with messy NYE chaos
+SPECIES / VIBE CUE:
+This is a ${speciesCue} — a chaotic spirit entity with that vibe.
 
-MULTIPLE NYE ACCESSORIES (IMPERFECT AND AWKWARD):
-- Crooked or oversized party hat
-- Champagne flute that is half-spilled or tipping
-- Party poppers mid-explosion
-- Stupid novelty sunglasses (stars, "2026", pixel frames)
-- Clock showing 12:00 (midnight clearly visible)
-- Tiny disco ball (held, dangling, or awkwardly attached)
-- Fireworks being held incorrectly or too close
-- Confetti stuck to the character, face, and props — NOT floating cleanly
+ENERGY & BEHAVIOR (MOST IMPORTANT):
+The Party Puff is mid-chaos.
+It is NOT standing still or posing for a photo.
+Acceptable behavior:
+- mid-jump, slightly out of control
+- leaning backward while fireworks misfire
+- spinning, bouncing, or careening through the frame
+- tripping, flailing, or launching something dangerous-fun
+- clearly caught in a chaotic NYE moment
 
-RULE: Nothing should feel centered, symmetrical, balanced, or perfect. Accessories should overlap, tilt, slip, collide, or feel slightly too big. Confetti should cling awkwardly and unevenly.
+POSE:
+- Asymmetrical
+- Off-balance
+- Dynamic
+- Captured mid-action
 
-LIGHTING:
-Party lights hitting the character — energetic, celebratory, slightly chaotic. Metallic textures on accessories (gold, silver). Dynamic lighting without overwhelming the core design.
+EXPRESSION:
+- Wild, mischievous, overexcited
+- Open-mouth laughter, yelling, or manic grin
+- Eyes wide, sparkling, or slightly uneven from motion
+- NOT calm
+- NOT polite
+- NOT "hello friend" energy
 
-COMPOSITION:
-- Off-center, asymmetrical
-- Motion and imbalance
-- Humor and imperfection over cleanliness
-- 1:1 aspect ratio
-- Joyful, dumb, slightly unhinged New Year's Eve energy
+NYE CHAOS ELEMENTS:
+- Fireworks exploding unevenly or sideways
+- Confetti flying chaotically (not evenly)
+- One prop malfunctioning or crooked (hat slipping, sparkler too close)
+- Visual motion cues: sparks, trails, bursts
 
-Overall tone: These should feel like small celebratory objects people buy impulsively because they're funny, relatable, and perfectly imperfect.
+BACKGROUND:
+- Simple but cinematic
+- Implies noise, motion, and chaos
+- Fireworks, sparks, light bursts
+- No detailed scenery
 
-The body MUST be ${primaryColor}. This is the most important rule.`;
+COMPOSITION RULES:
+- Slightly off-center framing
+- Clear silhouette
+- Feels like a frame pulled from a chaotic NYE scene
+- NOT symmetrical
+- NOT static
 
-    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, text, logo, watermark, signature, horror, creepy, distorted anatomy, beige, cream, pastel pink unless specified, random colors, centered composition, symmetrical, balanced, clean portrait, static pose, floating confetti, perfect accessories, minimal scene, boring`;
+The body MUST be ${primaryColor}. This is critical.
+
+GOAL:
+The result should feel like: "A mischievous New Year's Eve spirit who just caused a little bit of trouble — and loved it."`;
+
+    const negativePrompt = `photorealistic, realistic lighting, human anatomy, calm pose, standing neutrally, perfect symmetry, polite smile, generic cute mascot, static, centered, balanced, extra limbs, extra eyes, extra faces, text, logo, watermark, detailed scenery, muted colors, beige, cream, pastel pink unless specified, painterly, sketchy`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
