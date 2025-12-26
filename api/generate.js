@@ -76,10 +76,10 @@ export default async function handler(req, res) {
     const description = analysisData.candidates[0].content.parts[0].text;
     console.log('Description received:', description.substring(0, 100) + '...');
 
-    // Step 2: Generate cartoon with Together.ai
-    const prompt = `A fun, vibrant cartoon character illustration in a modern animation style. ${description}. The character is ${stylePrompts[style]}. Cartoon style, bright colors, cheerful expression, celebratory New Year's 2025 atmosphere, festive and joyful vibe, high quality digital art`;
-
-    console.log('Calling Together.ai...');
+    // Step 2: Transform image using FLUX.2-dev img2img
+    const prompt = `Transform into festive New Year's 2025 cartoon style. ${stylePrompts[style]}. Maintain the person's exact facial features and appearance. Bright vibrant cartoon colors, cheerful celebratory atmosphere, professional digital art quality.`;
+    
+    console.log('Calling Together.ai FLUX.2-dev img2img...');
     const imageResponse = await fetch('https://api.together.xyz/v1/images/generations', {
       method: 'POST',
       headers: {
@@ -87,11 +87,13 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'black-forest-labs/FLUX.1-schnell',
+        model: 'black-forest-labs/FLUX.2-dev',
         prompt: prompt,
+        image_url: image,
+        prompt_strength: 0.65,
         width: 1024,
         height: 1024,
-        steps: 4,
+        steps: 28,
         n: 1
       })
     });
