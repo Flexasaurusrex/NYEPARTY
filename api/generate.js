@@ -28,31 +28,31 @@ export default async function handler(req, res) {
     console.log('Style:', style);
     console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
-    // Base prompt - forces anthropomorphic transformation (used for ALL styles)
-    const basePrompt = "Transform the input PFP into a stylized anthropomorphic party animal character portrait (animal head + humanoid body). Keep the same pose, framing, clothing silhouette, and overall color palette as the original PFP, but replace the human head with an animal head (clearly non-human: muzzle/beak/snout, fur/feathers/scales, animal ears). The result must read as an anthropomorphic animal, not a human in costume. High-quality illustration, clean lines, vibrant celebratory mood, portrait, centered subject.";
+    // Base prompt - premium NYE transformation while preserving identity
+    const basePrompt = "Transform the uploaded PFP into an ultra-premium New Year's Eve celebration portrait while preserving the original character's identity, silhouette, pose, and key defining features. Upgrade the look with dramatic cinematic lighting, celebratory atmosphere, confetti, bokeh highlights, sparkles, and premium styling. High-quality illustration or polished digital art style, crisp clean details, iconic profile-picture composition, centered head-and-shoulders framing, sharp focus on the subject.";
     
-    // Negative prompt - blocks human faces and text aggressively
-    const negativePrompt = 'human face, human head, realistic human skin, portrait photo, ugly, low quality, blurry, extra faces, deformed, disfigured, bad anatomy, text, watermark, logo, words, "2025" text, letters, numbers';
+    // Conditional handling - prevents unwanted transformations
+    // Note: In production, you'd detect the PFP type. For now, using generic preservation.
+    const conditionalLine = "Keep the subject clearly recognizable with the same character design and species.";
+    
+    // Global negative prompt - MANDATORY
+    const negativePrompt = "text, words, numbers, watermark, logo, signature, blurry, low detail, bad anatomy, extra limbs, deformed, mutated, different character, different face, different species, nsfw, gore, scary, horror, lowres, jpeg artifacts, messy background, cropped head, out of frame";
 
-    // Random animal selection for variety while maintaining consistency
-    const animals = ['fox', 'raccoon', 'tiger', 'bear', 'wolf', 'cat', 'dog', 'bunny', 'panda', 'koala', 'owl', 'crocodile'];
-    const selectedAnimal = animals[Math.floor(Math.random() * animals.length)];
-    const animalLine = `Animal type: ${selectedAnimal} (clearly visible animal features)`;
-
-    // Vibe-specific additions (append to base)
-    const vibePrompts = {
-      classic: 'Wearing a glittery party hat, streamers, confetti burst, party blower in hand. Background: festive NYE decor, balloons, bokeh lights, celebratory atmosphere.',
-      sparkly: 'Surrounded by glitter and sparkles, wearing a glamorous New Year\'s crown/tiara. Champagne bubbles floating, golden confetti, soft glow lighting, magical sparkle haze.',
-      fireworks: 'Explosive fireworks lighting reflecting on the character, energetic celebration pose. Wearing oversized festive sunglasses, holding a sparkler. Background: colorful fireworks filling the sky, vibrant motion confetti, dynamic glow.',
-      champagne: 'Elegant tuxedo/suit or classy party outfit, refined NYE vibe. Champagne toast moment, clinking glasses nearby, warm golden ambient lighting, upscale decorations.'
+    // Vibe-specific suffixes (premium styling approach)
+    const vibeSuffixes = {
+      classic: 'Elegant black-and-gold New Year\'s Eve styling, tasteful party crown or hat, celebratory confetti burst, soft warm bokeh lights, refined festive mood, premium poster aesthetic.',
+      sparkly: 'Radiant glitter highlights, shimmering particles, prismatic light flares, jewel-toned reflections, glowing rim light, high-fashion New Year\'s Eve portrait lighting.',
+      fireworks: 'Huge colorful fireworks exploding in the background sky, vivid streaks and bursts, strong rim lighting from fireworks, dynamic celebration atmosphere, motion sparkle trails, bold high-energy contrast.',
+      champagne: 'Luxury lounge New Year\'s Eve vibe, warm golden lighting, champagne reflections, crystal glass bokeh, elegant attire, sophisticated celebration mood, premium cinematic portrait.'
     };
 
     // Construct final prompt
-    const prompt = `${basePrompt} ${animalLine} ${vibePrompts[style]}`;
+    const prompt = `${basePrompt} ${conditionalLine} ${vibeSuffixes[style]}`;
     
-    // Fireworks needs higher strength to overcome background-only tendency
-    const strength = style === 'fireworks' ? 0.75 : 0.65;
-    const guidance = style === 'fireworks' ? 9.0 : 8.5;
+    // Settings per spec: strength 0.60-0.68, steps 35-40, guidance 6.0-7.5
+    const strength = 0.60;
+    const steps = 38;
+    const guidance = 6.5;
     
     console.log('Starting Replicate prediction...');
     
@@ -71,7 +71,7 @@ export default async function handler(req, res) {
           prompt: prompt,
           negative_prompt: negativePrompt,
           strength: strength,
-          num_inference_steps: 40,
+          num_inference_steps: steps,
           guidance_scale: guidance
         }
       })
