@@ -54,8 +54,8 @@ export default async function handler(req, res) {
         input: {
           image: image,
           prompt: prompt,
-          strength: 0.75,
-          num_inference_steps: 25,
+          strength: 0.4,
+          num_inference_steps: 30,
           guidance_scale: 7.5
         }
       })
