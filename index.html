@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYE PFP Glow-Up 2025 ✨🎊</title>
+    <title>Party Puffs - NYE Mascot Generator 🎉</title>
     <link href="https://fonts.googleapis.com/css2?family=Righteous&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -430,14 +430,14 @@
 
     <div class="container">
         <header>
-            <h1>🎊 NYE PFP GLOW-UP 🎊</h1>
-            <p class="subtitle">Transform your PFP into a premium NYE celebration</p>
+            <h1>🎊 PARTY PUFFS 🎊</h1>
+            <p class="subtitle">Cute NYE mascots inspired by your PFP vibes</p>
         </header>
 
         <div class="main-card">
             <!-- Info Box -->
             <div class="info-box">
-                <strong>✨ How it works:</strong> Upload your Farcaster PFP and transform it into a premium New Year's Eve celebration portrait with cinematic lighting, confetti, and festive vibes. Your PFP stays recognizable—just gets an iconic NYE glow-up! Powered by <a href="https://replicate.com" target="_blank">SDXL on Replicate</a>
+                <strong>✨ How it works:</strong> Upload your PFP to inspire a Party Puff — a cute, round mascot celebrating NYE! We use your colors and vibes to create an original Party Puff character. Not a transformation, but a brand-new friend! Powered by <a href="https://replicate.com" target="_blank">SDXL on Replicate</a>
             </div>
 
             <!-- Upload Section -->
@@ -456,20 +456,20 @@
 
             <!-- Generate Button -->
             <button class="generate-btn" id="generateBtn">
-                ✨ Get Your NYE Glow-Up ✨
+                ✨ Generate My Party Puff ✨
             </button>
 
             <!-- Loading State -->
             <div class="loading" id="loading">
                 <div class="loader"></div>
-                <div class="loading-text">Creating your premium NYE portrait...</div>
+                <div class="loading-text">Creating your Party Puff...</div>
             </div>
 
             <!-- Result Section -->
             <div class="result-section" id="resultSection">
                 <img id="resultImage" class="result-image" alt="Result">
                 <button class="download-btn" id="downloadBtn">
-                    💾 Download Your NYE Glow-Up
+                    💾 Download Your Party Puff
                 </button>
             </div>
         </div>
@@ -545,9 +545,21 @@
         function handleFileUpload(file) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                uploadedImage = e.target.result;
-                previewImage.src = uploadedImage;
-                previewContainer.style.display = 'block';
+                const img = new Image();
+                img.onload = () => {
+                    // Convert to PNG using canvas (supports all formats including AVIF)
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Convert to PNG data URL
+                    uploadedImage = canvas.toDataURL('image/png');
+                    previewImage.src = uploadedImage;
+                    previewContainer.style.display = 'block';
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
@@ -609,7 +621,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `nye-glowup-${Date.now()}.png`;
+            a.download = `party-puff-${Date.now()}.png`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
