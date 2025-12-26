@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 
     console.log('Starting image generation...');
     console.log('Style:', style);
-    console.log('Has TOGETHER_API_KEY:', !!process.env.TOGETHER_API_KEY);
+    console.log('Has REPLICATE_API_KEY:', !!process.env.REPLICATE_API_KEY);
 
     // Style prompts
     const stylePrompts = {
@@ -36,38 +36,70 @@ export default async function handler(req, res) {
       champagne: 'in an elegant champagne celebration scene, wearing a sophisticated party outfit, with champagne glasses clinking and elegant decorations'
     };
 
-    // Generate cartoon using FLUX.1.1-pro with image input
-    const prompt = `Transform this into a festive New Year's 2025 cartoon. ${stylePrompts[style]}. Keep the character/person completely recognizable. Bright vibrant cartoon style, cheerful NYE celebration, confetti, balloons, 2025 decorations, professional digital art.`;
+    // Use Replicate's img2img for actual transformation
+    const prompt = `Festive New Year's 2025 cartoon style illustration. ${stylePrompts[style]}. Bright vibrant cartoon colors, cheerful celebration atmosphere, confetti, balloons, sparklers, 2025 decorations, professional digital art, animated movie style`;
     
-    console.log('Calling Together.ai FLUX.1.1-pro...');
-    const imageResponse = await fetch('https://api.together.xyz/v1/images/generations', {
+    console.log('Starting Replicate prediction...');
+    
+    // Create prediction
+    const predictionResponse = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
-        'Content-Type': 'application/json'
+        'Authorization': `Token ${process.env.REPLICATE_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'wait'
       },
       body: JSON.stringify({
-        model: 'black-forest-labs/FLUX.1.1-pro',
-        prompt: prompt,
-        image_url: image,
-        prompt_strength: 0.7,
-        width: 1024,
-        height: 1024,
-        steps: 28
+        version: '7762fd07cf82c948538e41f63f77d685e02b063e37e496e96eefd46c929f9bdc',
+        input: {
+          image: image,
+          prompt: prompt,
+          strength: 0.75,
+          num_inference_steps: 25,
+          guidance_scale: 7.5
+        }
       })
     });
 
-    console.log('Together.ai response status:', imageResponse.status);
-
-    if (!imageResponse.ok) {
-      const errorData = await imageResponse.text();
-      console.error('Together.ai error:', errorData);
-      throw new Error(`Image generation failed: ${errorData}`);
+    if (!predictionResponse.ok) {
+      const errorData = await predictionResponse.text();
+      console.error('Replicate error:', errorData);
+      throw new Error(`Prediction creation failed: ${errorData}`);
     }
 
-    const imageData = await imageResponse.json();
-    const generatedImageUrl = imageData.data[0].url;
+    let prediction = await predictionResponse.json();
+    console.log('Prediction created:', prediction.id);
+    console.log('Initial status:', prediction.status);
 
+    // Poll for completion (with timeout)
+    let attempts = 0;
+    const maxAttempts = 60; // 60 seconds max
+    
+    while (prediction.status !== 'succeeded' && prediction.status !== 'failed' && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      attempts++;
+      
+      const statusResponse = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
+        headers: {
+          'Authorization': `Token ${process.env.REPLICATE_API_KEY}`
+        }
+      });
+      
+      prediction = await statusResponse.json();
+      console.log(`Attempt ${attempts}: Status = ${prediction.status}`);
+    }
+
+    if (prediction.status === 'failed') {
+      console.error('Prediction failed:', prediction.error);
+      throw new Error(`Image generation failed: ${prediction.error}`);
+    }
+
+    if (attempts >= maxAttempts) {
+      throw new Error('Image generation timed out');
+    }
+
+    const generatedImageUrl = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+    
     console.log('Success! Image URL:', generatedImageUrl);
     return res.status(200).json({ imageUrl: generatedImageUrl });
 
