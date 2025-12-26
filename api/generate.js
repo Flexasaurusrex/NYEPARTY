@@ -69,80 +69,56 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Build prompt with chaotic spirit entity energy
-    const prompt = `Create a single "Party Puff" — a mischievous spirit-ball embodiment of chaotic New Year's Eve energy.
+    // Build prompt with playful NYE chaos energy
+    const prompt = `A chaotic but playful New Year's Eve spirit mascot ("Party Puff"), inspired by the uploaded PFP's dominant colors and vibe.
 
-CONCEPT:
-Party Puffs are NOT mascots and NOT polite characters.
-They are chaotic NYE spirit entities — playful, unhinged, slightly dangerous, and having WAY too much fun.
-Think: Tarantino's "Four Rooms" energy in puffball spirit form.
+Character:
+- A round, fluffy, puffball creature
+- The body color MUST be ${primaryColor}
+- Expressive cartoon face with BIG joyful eyes (no glowing demon eyes)
+- Wide mischievous grin, playful chaos — NOT angry or evil
+- Cute troublemaker energy, like a NYE gremlin who popped champagne too early
+- This is a ${speciesCue} with that specific vibe
 
-STYLE:
-- Round, soft, puffball creature
-- Cartoon / illustrated (not realistic)
-- Bold outlines, expressive shapes
-- High-contrast, cinematic lighting
-- Sticker-readable at small sizes
+Style & Mood:
+- High-energy New Year's Eve celebration
+- Confetti exploding everywhere
+- Sparkler trails, glitter bursts, party streamers
+- Champagne foam splashing, corks flying
+- Fireworks in the background, soft and festive (not violent)
+- Bright celebratory lighting, warm highlights, joyful color palette
 
-COLOR RULE (CRITICAL — MUST FOLLOW):
-The Party Puff's PRIMARY body color MUST be ${primaryColor}.
-Secondary details must be lighter/darker variations of ${primaryColor} or use ${secondaryColor}.
-Accent sparks and highlights can use ${accentColor}.
-Color connection to the source PFP must be obvious at a glance.
-NO unrelated palettes. The puff MUST be ${primaryColor}.
+Color Palette (CRITICAL):
+- Primary body color: ${primaryColor}
+- Secondary details: ${secondaryColor}
+- Accent highlights and sparkles: ${accentColor}
+- Color connection to source PFP must be obvious
+- The puff MUST be ${primaryColor}
 
-SPECIES / VIBE CUE:
-This is a ${speciesCue} — a chaotic spirit entity with that vibe.
+Design Constraints:
+- EXACTLY two eyes
+- Rounded soft shapes, no sharp fangs or monster anatomy
+- No horror, no villain, no demon energy
+- No realistic humans
+- Mascot-style illustration, clean cartoon lines
+- Centered character, 1:1 composition, PFP-friendly framing
 
-ENERGY & BEHAVIOR (MOST IMPORTANT):
-The Party Puff is mid-chaos.
-It is NOT standing still or posing for a photo.
-Acceptable behavior:
-- mid-jump, slightly out of control
-- leaning backward while fireworks misfire
-- spinning, bouncing, or careening through the frame
-- tripping, flailing, or launching something dangerous-fun
-- clearly caught in a chaotic NYE moment
+Chaos Direction:
+- "Playful NYE chaos" not rage
+- Looks like it just caused fun trouble at a party
+- Energetic, silly, slightly unhinged joy
+- Mid-celebration moment
 
-POSE:
-- Asymmetrical
-- Off-balance
-- Dynamic
-- Captured mid-action
+Background:
+- Simple festive backdrop with fireworks, sparkles, confetti
+- Color palette respects ${primaryColor}, ${secondaryColor}, ${accentColor}
 
-EXPRESSION:
-- Wild, mischievous, overexcited
-- Open-mouth laughter, yelling, or manic grin
-- Eyes wide, sparkling, or slightly uneven from motion
-- NOT calm
-- NOT polite
-- NOT "hello friend" energy
+Overall vibe:
+A mischievous New Year's Eve spirit celebrating too hard — chaotic, joyful, adorable, and extremely shareable.
 
-NYE CHAOS ELEMENTS:
-- Fireworks exploding unevenly or sideways
-- Confetti flying chaotically (not evenly)
-- One prop malfunctioning or crooked (hat slipping, sparkler too close)
-- Visual motion cues: sparks, trails, bursts
+The body MUST be ${primaryColor}. This is critical.`;
 
-BACKGROUND:
-- Simple but cinematic
-- Implies noise, motion, and chaos
-- Fireworks, sparks, light bursts
-- No detailed scenery
-
-COMPOSITION RULES:
-- Slightly off-center framing
-- Clear silhouette
-- Feels like a frame pulled from a chaotic NYE scene
-- NOT symmetrical
-- NOT static
-
-The body MUST be ${primaryColor}. This is critical.
-
-GOAL:
-The result should feel like: "A mischievous New Year's Eve spirit who just caused a little bit of trouble — and loved it."`;
-
-    const negativePrompt = `photorealistic, realistic lighting, human anatomy, calm pose, standing neutrally, perfect symmetry, polite smile, generic cute mascot, static, centered, balanced, extra limbs, extra eyes, extra faces, text, logo, watermark, detailed scenery, muted colors, beige, cream, pastel pink unless specified, painterly, sketchy`;
+    const negativePrompt = `angry, evil, demon, monster, horror, villain, scary, sharp teeth, glowing eyes, photorealistic, realistic lighting, human anatomy, extra limbs, extra eyes, extra faces, text, logo, watermark, muted colors, beige, cream, pastel pink unless specified, painterly, sketchy, static, boring`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
