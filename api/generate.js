@@ -73,50 +73,45 @@ module.exports = async function handler(req, res) {
     const colors = await extractDominantColors(image);
     console.log('Extracted colors:', colors);
 
-    // PARTY PUFF PROMPT - with強 color enforcement
+    // PARTY PUFF PROMPT - ChatGPT optimized version
     const prompt = `Create a cute, friendly cartoon mascot called a "Party Puff" celebrating New Year's Eve.
-
-CRITICAL COLOR REQUIREMENT - MUST FOLLOW EXACTLY:
-The Party Puff's body MUST be colored ${colors.primary}. This is the PRIMARY body color extracted from the user's image and MUST be used. The Party Puff should be primarily this color: ${colors.primary}.
-
 The Party Puff MUST follow these rules:
-- One round, circular body colored ${colors.primary}
-- EXACTLY two eyes
-- EXACTLY one small mouth
+- One round, circular body
+- EXACTLY two large friendly eyes
+- EXACTLY one small smiling mouth
 - No nose
 - No extra faces
 - No extra eyes
 - No extra limbs
 - Simple, clean silhouette
-- Smooth flat colors with the primary color being ${colors.primary}
-- Clear black or dark outline
+- Smooth flat colors
+- Clear dark outline
 - Cute, wholesome, sticker-like appearance
-The Party Puff is non-human and looks like a modern game or app mascot.
-
+IMPORTANT COLOR RULE:
+- The Party Puff's MAIN BODY COLOR must be based on the DOMINANT COLOR of the uploaded image
+- If the uploaded image is mostly green, the Party Puff should be green
+- If mostly blue, the Party Puff should be blue
+- Secondary colors from the image may be used for cheeks, glow, confetti, or accessories
 STYLE:
 - Clean cartoon illustration
 - Vector-style shading
 - No texture noise
 - No realism
 - No painterly brush strokes
-- No fur, wrinkles, or organic detail
-
+- No gradients on the body (flat color only)
 NEW YEAR'S EVE THEME:
-- Colorful confetti floating around (can use ${colors.secondary}, ${colors.accent})
-- Sparkles and soft glow effects using ${colors.highlight}
-- Festive lighting
-- ONE simple party accessory only (party hat OR glasses OR party horn)
+- Colorful confetti
+- Sparkles and soft glow
+- ONE simple party accessory only (party hat OR glasses OR horn)
 - Joyful, happy expression
-
 COMPOSITION:
 - Centered character
-- Plain or softly glowing background
+- Simple background that complements the body color
 - Designed to look great as a circular profile picture
+DO NOT copy any characters, faces, symbols, or shapes from the uploaded image.`;
 
-REMEMBER: The main body color MUST be ${colors.primary}!`;
-
-    // NEGATIVE PROMPT - FLUX respects this very well
-    const negativePrompt = `realistic, photorealistic, horror, creepy, scary, abstract, surreal, extra eyes, extra faces, multiple mouths, deformed anatomy, fur, wrinkles, texture noise, painterly, sketchy, complex background, clutter, kirby, copyrighted character`;
+    // NEGATIVE PROMPT - ChatGPT version
+    const negativePrompt = `realistic, photorealistic, horror, creepy, scary, abstract, surreal, extra eyes, extra faces, multiple mouths, fur, wrinkles, texture noise, painterly, complex shading, gradients on body, kirby, copyrighted character`;
 
     // FLUX 1.1 Pro - exact recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
