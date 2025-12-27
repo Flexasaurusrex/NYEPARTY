@@ -110,8 +110,29 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Clean simplified prompt with variety
-    const prompt = `Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
+    // Add random NYE activity selection
+    const activities = [
+      "popping a champagne bottle with spray everywhere",
+      "throwing confetti up in the air with both arms raised",
+      "blowing a party horn aggressively",
+      "holding sparklers in both hands with trails of light",
+      "dancing wildly with streamers flying",
+      "jumping in celebration with fireworks behind",
+      "wearing stacked party hats that are falling off",
+      "holding a 'HAPPY NEW YEAR' banner and cheering",
+      "riding on top of a giant champagne cork",
+      "juggling party poppers mid-explosion"
+    ];
+    
+    const selectedActivity = activities[Math.floor(Math.random() * activities.length)];
+    console.log('Selected NYE activity:', selectedActivity);
+    
+    // Prompt with FORCED ACTION at the top
+    const prompt = `NYE ACTION (CRITICAL - MUST SHOW THIS):
+The Party Puff is actively ${selectedActivity}.
+Show dynamic motion, NOT a static pose. The character MUST be mid-action with movement visible.
+
+Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
 
 The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
 
@@ -128,35 +149,25 @@ STYLE RULES:
 - Smooth outlines.
 - No realism, no painterly texture, no fur unless explicitly implied by the species cue.
 - Exactly two eyes.
-- One mouth.
-- No extra limbs, faces, or features.
+- One mouth (open in excitement/celebration).
+- Dynamic pose showing action.
 
-NYE VARIETY (ADD PERSONALITY):
-Choose ONE of these to add variety:
-- ACCESSORIES: party hat, novelty glasses (star-shaped, "2025" glasses), bow tie, confetti stuck in fur/body, glitter sparkles on body
-- POSES: jumping with excitement, leaning back laughing, spinning, raising arms in celebration, sitting with legs kicked up
-- ACTIVITIES: blowing a party horn, holding sparklers, popping champagne, tossing confetti, wearing multiple party hats stacked, holding a "Happy New Year" banner
-
-The character should feel dynamic and celebratory, not just standing still.
-
-NYE DETAILS:
-- Subtle sparkles or confetti around the character.
-- Clean, sticker-like composition.
-- Background color should complement ${primaryColor} (darker backgrounds for light puffs, lighter backgrounds for dark puffs).
+NYE BIG ENERGY:
+- High-energy celebration
+- Motion lines, sparkles, confetti actively flying
+- Fireworks, champagne spray, or party effects clearly visible
+- The character should look like they're having the time of their life
+- NOT calm, NOT standing still, NOT just posing
 
 COMPOSITION:
-- Centered character
+- Centered character mid-action
 - 1:1 aspect ratio
-- High clarity, no motion blur
-- Friendly, joyful expression
+- High clarity
+- Celebratory background with NYE elements (fireworks, lights, bokeh)
 
-IMPORTANT:
-This must feel PERSONAL because of the color palette and species cue.
-The colors MUST match the uploaded image's vibe.
-Avoid generic pastel blobs.
-Avoid random color choices.`;
+The colors MUST match the uploaded image's vibe.`;
 
-    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character`;
+    const negativePrompt = `standing still, static pose, calm, neutral expression, just standing, not moving, no action, photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character, rosy cheeks, pink cheek circles`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
