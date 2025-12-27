@@ -69,85 +69,50 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Chaotic behaviors
-    const behaviors = [
-      "mid-jump, slightly out of control",
-      "leaning backward while fireworks misfire",
-      "spinning wildly, bouncing through the frame",
-      "tripping over confetti, flailing",
-      "launching a sparkler that's too close",
-      "careening sideways as champagne sprays",
-      "caught mid-spin with party hat flying off",
-      "stumbling forward with arms windmilling"
+    // Simple cute variations
+    const poses = [
+      "jumping happily with confetti around",
+      "wearing a party hat and smiling",
+      "holding a sparkler",
+      "celebrating with arms up",
+      "surrounded by NYE sparkles"
     ];
-    const selectedBehavior = behaviors[Math.floor(Math.random() * behaviors.length)];
-    console.log('Selected behavior:', selectedBehavior);
+    const selectedPose = poses[Math.floor(Math.random() * poses.length)];
     
-    // Chaotic spirit prompt
-    const prompt = `Create a single "Party Puff" — a mischievous spirit-ball embodiment of chaotic New Year's Eve energy.
+    // Simple, consistent prompt
+    const prompt = `A cute round Party Puff mascot celebrating New Year's Eve.
 
-CONCEPT:
-Party Puffs are NOT mascots and NOT polite characters.
-They are chaotic NYE spirit entities — playful, unhinged, slightly dangerous, and having WAY too much fun.
-Think: Tarantino's "Four Rooms" energy in puffball spirit form.
+Character is a ${speciesCue}, ${selectedPose}.
 
 STYLE:
-- Round, soft, puffball creature
-- Cartoon / illustrated (not realistic)
-- Bold outlines, expressive shapes
-- High-contrast, cinematic lighting
-- Sticker-readable at small sizes
+Flat 2D illustration
+Simple cartoon style
+Bold clean outlines
+Soft shading
+Like a game character or sticker
 
-COLOR RULE (CRITICAL — MUST FOLLOW):
-The Party Puff's PRIMARY body color MUST be ${primaryColor}.
-Secondary details must use ${secondaryColor}.
-Accent highlights must use ${accentColor}.
-NO unrelated palettes.
-Color connection must be obvious at a glance.
+CHARACTER:
+Round chubby body
+Two simple eyes
+Small happy smile
+Cute and friendly
 
-SPECIES / VIBE CUE:
-This is a ${speciesCue}.
+COLORS (CRITICAL):
+Body color: ${primaryColor}
+Details: ${secondaryColor}
+Accents: ${accentColor}
+Use these exact colors
 
-ENERGY & BEHAVIOR (MOST IMPORTANT):
-The Party Puff is ${selectedBehavior}.
-It is NOT standing still or posing for a photo.
-Clearly caught in a chaotic NYE moment.
+SCENE:
+New Year's Eve celebration
+Confetti and sparkles
+Simple festive background
+Centered composition
+1:1 square
 
-POSE:
-- Asymmetrical
-- Off-balance
-- Dynamic
-- Captured mid-action
+Cute, simple, clean illustration.`;
 
-EXPRESSION:
-- Wild, mischievous, overexcited
-- Open-mouth laughter or yelling
-- Eyes wide, sparkling, or slightly uneven from motion
-- NOT calm
-- NOT polite
-
-NYE CHAOS ELEMENTS:
-- Fireworks exploding unevenly or sideways
-- Confetti flying chaotically (not evenly)
-- One prop malfunctioning or crooked (hat slipping, sparkler too close)
-- Visual motion cues: sparks, trails, bursts
-
-BACKGROUND:
-- Simple but cinematic
-- Implies noise, motion, and chaos
-- Fireworks, sparks, light bursts
-- No detailed scenery
-
-COMPOSITION RULES:
-- Slightly off-center framing
-- Clear silhouette
-- Feels like a frame pulled from a chaotic NYE scene
-- NOT symmetrical
-- NOT static
-
-The body MUST be ${primaryColor}.`;
-
-    const negativePrompt = `calm poses, standing neutrally, perfect symmetry, polite smiles, generic cute mascot, human anatomy, realistic textures, extra limbs, extra eyes, extra faces, photorealistic, 3D render, static, centered, balanced, clean portrait`;
+    const negativePrompt = `realistic, photorealistic, 3D render, complex, detailed, scary, ugly, extra eyes, extra faces, text, watermark, dark, gritty`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
