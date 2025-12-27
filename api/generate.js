@@ -69,86 +69,92 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Action/prop arrays with compatibility
+    // ACTIONS array (choose exactly one)
     const actions = [
-      "popping a confetti cannon mid-blast with chaotic celebratory energy",
-      "spraying champagne everywhere like a tiny menace",
-      "swinging a sparkler like a magic wand, leaving a glitter trail",
-      "aggressively tossing streamers into the air like party chaos",
-      "riding a tiny rocket firework with a mischievous grin",
-      "stealing a party hat and wearing it sideways like a prankster"
+      "Popping a confetti cannon mid-blast (confetti visibly exploding outward)",
+      "Spraying champagne everywhere (champagne spray arc clearly visible)",
+      "Swinging a sparkler like a wand (sparkler trail visible)",
+      "Tossing streamers aggressively (streamers flying in motion)",
+      "Riding a tiny rocket firework (small rocket under/behind puff with motion lines)",
+      "Stealing a party hat and wearing it sideways (mischief pose—hat tilted, smug but still friendly)"
     ];
     
+    // PROPS array (choose exactly one)
     const props = [
-      "confetti cannon",
-      "champagne spray",
-      "sparkler",
-      "party hat"
+      "Confetti cannon",
+      "Champagne spray bottle",
+      "Sparkler",
+      "Party hat"
     ];
     
-    // Pick random action
-    const action = actions[Math.floor(Math.random() * actions.length)];
+    // Random selection
+    const chosenAction = actions[Math.floor(Math.random() * actions.length)];
     
-    // Pick compatible prop based on action
-    let prop;
-    if (action.includes("confetti cannon")) {
-      prop = "confetti cannon";
-    } else if (action.includes("champagne")) {
-      prop = "champagne spray";
-    } else if (action.includes("sparkler")) {
-      prop = "sparkler";
-    } else if (action.includes("party hat") || action.includes("hat")) {
-      prop = "party hat";
-    } else if (action.includes("rocket firework")) {
-      prop = Math.random() > 0.5 ? "sparkler" : "confetti cannon";
+    // Match prop to action for consistency
+    let chosenProp;
+    if (chosenAction.includes("confetti cannon")) {
+      chosenProp = "Confetti cannon";
+    } else if (chosenAction.includes("champagne")) {
+      chosenProp = "Champagne spray bottle";
+    } else if (chosenAction.includes("sparkler")) {
+      chosenProp = "Sparkler";
+    } else if (chosenAction.includes("party hat")) {
+      chosenProp = "Party hat";
+    } else if (chosenAction.includes("rocket firework")) {
+      chosenProp = Math.random() > 0.5 ? "Sparkler" : "Confetti cannon";
     } else {
-      // Fallback: random prop
-      prop = props[Math.floor(Math.random() * props.length)];
+      chosenProp = props[Math.floor(Math.random() * props.length)];
     }
     
-    console.log('Action:', action);
-    console.log('Prop:', prop);
+    console.log('Chosen action:', chosenAction);
+    console.log('Chosen prop:', chosenProp);
     
-    // Final optimized prompt
-    const prompt = `Create a single cute "Party Puff" mascot character celebrating New Year's Eve.
+    // FINAL LOCKED PROMPT
+    const prompt = `Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
+
 The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
 
-COLOR RULES (CRITICAL - FOLLOW EXACTLY):
-- The main body color MUST be ${primaryColor}. Make the entire body ${primaryColor}.
-- Secondary details and accents MUST use ${secondaryColor}.
-- Small highlights ONLY may use ${accentColor}.
-- The character should be PRIMARILY ${primaryColor} in color.
-- Do NOT introduce any new dominant colors. Do NOT use random pastels or beige unless that is the specified color.
+COLOR RULES (STRICT):
+- The body color MUST be based on ${primaryColor}.
+- Secondary details MUST use ${secondaryColor}.
+- Small accents ONLY may use ${accentColor}.
+- Do NOT introduce any new dominant colors.
 
 STYLE RULES:
-- Stylized video game mascot portrait / character icon.
-- Flat-shaded, soft gradients only (clean shading, flat lighting).
-- Smooth outlines, bold readable shapes.
-- No realism, no painterly texture, no cinematic lighting, no 3D render look.
-- Exactly two eyes. One mouth. No extra limbs, faces, or features.
+- Flat-shaded, soft gradients only.
+- Smooth outlines.
+- No realism, no painterly texture, no fur unless explicitly implied by the species cue.
+- Exactly two eyes.
+- One mouth.
+- No extra limbs, faces, or features.
+- NO circular rosy cheeks / cheek dots / pink cheek patches.
 
-FACE / EXPRESSION (MUST MATCH EXACTLY):
-- Eyes: two simple black oval eyes with small white catchlights.
-- Mouth: small open smiling mouth (simple curved shape or perfect circle looking surprised) with a tiny red tongue visible.
-- NO rosy cheek circles. NO blush marks. NO pink cheek dots. NO makeup.
+FACE / EXPRESSION (LOCKED):
+- Two simple black oval eyes with small white highlights.
+- One small open smile mouth (friendly).
+- No angry eyebrows, no manic grin, no screaming mouth, no anime eyes.
 
-NYE ACTION + PROP (DYNAMIC, EXACTLY ONE OF EACH):
-- ACTION: ${action}
-- PROP: ${prop}
-The prop must be ACTIVE and part of the action (not decorative).
-
-NYE VIBE DETAILS (SUBTLE):
-- Add subtle sparkles OR small confetti bits in the air (minimal, not clutter).
-- Clean, sticker-like composition. Simple background that does NOT overpower the character.
+NYE DETAILS:
+- Include EXACTLY ONE prop (active, not decorative): ${chosenProp}.
+- Include EXACTLY ONE action (clear, dynamic, readable): ${chosenAction}.
+- The prop must be used actively in the action and clearly visible.
+- Subtle sparkles or confetti around the character (only if it does not count as an extra prop).
+- Clean, sticker-like composition.
+- Neutral or soft background that does NOT overpower the character.
 
 COMPOSITION:
-- Single character only, centered
+- Centered character
 - 1:1 aspect ratio
 - High clarity, no motion blur
+- Friendly, joyful expression (mischief allowed, but still friendly)
 
-The body MUST be ${primaryColor}. This is the most important rule.`;
+IMPORTANT:
+This must feel PERSONAL because of the color palette and species cue.
+Avoid generic pastel blobs.
+Avoid random color choices.
+Avoid default "cute mascot" tropes unless they match the given palette.`;
 
-    const negativePrompt = `photorealistic, realism, cinematic lighting, dramatic lighting, 3D render, painterly, sketchy, messy lines, fur texture, highly detailed, hyperreal, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, motion blur, blush, rosy cheeks, pink cheek circles, cheek dots, makeup, random colors, beige, cream, pastel pink, default cute mascot palette, gradients that overpower the character`;
+    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character, rosy cheeks, cheek blush circles, pink cheek dots, anime eyes, angry eyebrows, screaming mouth, manic grin, extra props, multiple props, decorative props not being used`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
