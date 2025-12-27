@@ -50,6 +50,21 @@ module.exports = async (req, res) => {
     const secondaryColor = hexToColorName(paletteHex[1]);
     const accentColor = hexToColorName(paletteHex[2]);
     
+    // Sub-species variations for visual diversity
+    const subSpecies = [
+      "with tiny stubby arms",
+      "with little round feet",
+      "with small pointy ears",
+      "with a fluffy tuft on top",
+      "with tiny wings",
+      "with a curly tail",
+      "with antenna on head",
+      "with small spikes along back",
+      "with big round ears",
+      "with a small horn"
+    ];
+    const selectedSubSpecies = subSpecies[Math.floor(Math.random() * subSpecies.length)];
+    
     const vibes = [
       "ecstatic and jumping with joy, confetti exploding around them",
       "dizzy and spinning with stars circling their head, party hat flying off",
@@ -66,7 +81,7 @@ module.exports = async (req, res) => {
     
     const prompt = `Flat 2D vector illustration. Simple cartoon. Game sprite style. Sticker art.
 
-A cute round 'Party Puff' mascot - a ${speciesCue} celebrating New Year's Eve.
+A cute round 'Party Puff' mascot - a ${speciesCue} ${selectedSubSpecies}, celebrating New Year's Eve.
 The Party Puff is ${selectedVibe}.
 
 ART STYLE (LOCKED):
@@ -81,7 +96,7 @@ NO fur texture
 NO depth effects
 
 CHARACTER:
-Simple round body
+Simple round body ${selectedSubSpecies}
 Two simple eyes (dots or ovals)
 Small smile
 Minimal geometric shapes
