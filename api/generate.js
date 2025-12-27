@@ -69,47 +69,47 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // ACTIONS array (choose exactly one)
+    // ACTIONS LIST (choose exactly ONE each generation)
     const actions = [
-      "Popping a confetti cannon mid-blast (confetti visibly exploding outward)",
-      "Spraying champagne everywhere (champagne spray arc clearly visible)",
-      "Swinging a sparkler like a wand (sparkler trail visible)",
-      "Tossing streamers aggressively (streamers flying in motion)",
-      "Riding a tiny rocket firework (small rocket under/behind puff with motion lines)",
-      "Stealing a party hat and wearing it sideways (mischief pose—hat tilted, smug but still friendly)"
+      "popping a confetti cannon mid-blast (confetti burst clearly visible)",
+      "spraying champagne everywhere (champagne spray arc clearly visible)",
+      "swinging a sparkler like a wand (sparkler trails clearly visible)",
+      "tossing streamers aggressively (streamers clearly flying)",
+      "riding a tiny rocket firework (small rocket with sparks, puff holding on)",
+      "stealing a party hat and wearing it sideways (mischief pose, hat clearly askew)"
     ];
     
-    // PROPS array (choose exactly one)
+    // PROPS LIST (choose exactly ONE each generation)
     const props = [
-      "Confetti cannon",
-      "Champagne spray bottle",
-      "Sparkler",
-      "Party hat"
+      "confetti cannon",
+      "champagne bottle spraying",
+      "sparkler",
+      "party hat"
     ];
     
     // Random selection
-    const chosenAction = actions[Math.floor(Math.random() * actions.length)];
+    const actionChoice = actions[Math.floor(Math.random() * actions.length)];
     
-    // Match prop to action for consistency
-    let chosenProp;
-    if (chosenAction.includes("confetti cannon")) {
-      chosenProp = "Confetti cannon";
-    } else if (chosenAction.includes("champagne")) {
-      chosenProp = "Champagne spray bottle";
-    } else if (chosenAction.includes("sparkler")) {
-      chosenProp = "Sparkler";
-    } else if (chosenAction.includes("party hat")) {
-      chosenProp = "Party hat";
-    } else if (chosenAction.includes("rocket firework")) {
-      chosenProp = Math.random() > 0.5 ? "Sparkler" : "Confetti cannon";
+    // Match prop to action
+    let propChoice;
+    if (actionChoice.includes("confetti cannon")) {
+      propChoice = "confetti cannon";
+    } else if (actionChoice.includes("champagne")) {
+      propChoice = "champagne bottle spraying";
+    } else if (actionChoice.includes("sparkler")) {
+      propChoice = "sparkler";
+    } else if (actionChoice.includes("party hat")) {
+      propChoice = "party hat";
+    } else if (actionChoice.includes("rocket firework")) {
+      propChoice = Math.random() > 0.5 ? "sparkler" : "confetti cannon";
     } else {
-      chosenProp = props[Math.floor(Math.random() * props.length)];
+      propChoice = props[Math.floor(Math.random() * props.length)];
     }
     
-    console.log('Chosen action:', chosenAction);
-    console.log('Chosen prop:', chosenProp);
+    console.log('Action choice:', actionChoice);
+    console.log('Prop choice:', propChoice);
     
-    // FINAL LOCKED PROMPT
+    // FINAL PROMPT (verbatim with MISCHIEF ACTION section added)
     const prompt = `Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
 
 The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
@@ -124,29 +124,28 @@ STYLE RULES:
 - Flat-shaded, soft gradients only.
 - Smooth outlines.
 - No realism, no painterly texture, no fur unless explicitly implied by the species cue.
-- Exactly two eyes.
-- One mouth.
+- Exactly two eyes (simple black oval eyes).
+- One mouth (small simple open smile).
 - No extra limbs, faces, or features.
-- NO circular rosy cheeks / cheek dots / pink cheek patches.
-
-FACE / EXPRESSION (LOCKED):
-- Two simple black oval eyes with small white highlights.
-- One small open smile mouth (friendly).
-- No angry eyebrows, no manic grin, no screaming mouth, no anime eyes.
 
 NYE DETAILS:
-- Include EXACTLY ONE prop (active, not decorative): ${chosenProp}.
-- Include EXACTLY ONE action (clear, dynamic, readable): ${chosenAction}.
-- The prop must be used actively in the action and clearly visible.
-- Subtle sparkles or confetti around the character (only if it does not count as an extra prop).
+- One small party hat OR one festive accessory (not both).
+- Subtle sparkles or confetti around the character.
 - Clean, sticker-like composition.
 - Neutral or soft background that does NOT overpower the character.
+
+MISCHIEF ACTION (CRITICAL):
+- The Party Puff is actively doing this action: ${actionChoice}.
+- The prop MUST be clearly visible and actively used: ${propChoice}.
+- The action must read instantly at thumbnail size: clear pose + clear prop + clear motion cues (spark trails / confetti burst / champagne spray / flying streamers / rocket sparks).
+- Keep the composition centered, but allow arms/pose to show the action. No static standing pose.
+- Mischievous fun energy (chaotic NYE spirit) but NOT scary, NOT angry, NOT horror.
 
 COMPOSITION:
 - Centered character
 - 1:1 aspect ratio
 - High clarity, no motion blur
-- Friendly, joyful expression (mischief allowed, but still friendly)
+- Friendly, joyful expression (small open smile, not huge mouth)
 
 IMPORTANT:
 This must feel PERSONAL because of the color palette and species cue.
@@ -154,7 +153,7 @@ Avoid generic pastel blobs.
 Avoid random color choices.
 Avoid default "cute mascot" tropes unless they match the given palette.`;
 
-    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character, rosy cheeks, cheek blush circles, pink cheek dots, anime eyes, angry eyebrows, screaming mouth, manic grin, extra props, multiple props, decorative props not being used`;
+    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character, blush cheeks, rosy cheeks, cheek circles, pink cheek dots, kawaii blush`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
