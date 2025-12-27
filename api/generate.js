@@ -110,69 +110,74 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Mischievous/messy NYE activities
+    // Cute mischievous NYE activities (clear and visible)
     const activities = [
-      "passed out on the floor with empty champagne bottles scattered around",
-      "stumbling around dizzy with party hat crooked and eyes spinning",
-      "hungover with messy confetti stuck all over, holding head in pain",
-      "chugging champagne straight from the bottle with foam everywhere",
-      "tangled up in streamers looking confused and disheveled",
-      "wearing way too many party hats stacked dangerously high",
-      "drunkenly dancing on a table with champagne splashing",
-      "face-planted into a cake with frosting everywhere",
-      "passed out hugging an empty champagne bottle like a teddy bear",
-      "spinning around dizzy with stars circling the head",
-      "hiccupping with bubbles coming out, looking dazed",
-      "attempting to stand but tipping over with legs wobbly",
-      "covered in glitter and confetti looking absolutely wrecked",
-      "partying too hard with tongue out and eyes half-closed"
+      "holding a champagne bottle upside down with the last drops dripping out, looking satisfied",
+      "wearing 3-4 party hats stacked on top of each other, grinning mischievously",
+      "sitting surrounded by empty champagne bottles with a big satisfied smile",
+      "blowing a party horn with confetti exploding everywhere",
+      "holding sparklers in both hands with bright trails of light",
+      "popping a champagne bottle with foam spraying upward",
+      "dancing energetically with streamers swirling around",
+      "tossing confetti high in the air with arms raised in celebration",
+      "wearing novelty '2025' glasses and holding a noisemaker",
+      "juggling party poppers that are mid-explosion with sparkles",
+      "riding on top of a giant champagne cork like a rocket",
+      "tangled in colorful streamers but looking happy about it",
+      "holding a 'HAPPY NEW YEAR' banner and cheering loudly",
+      "surrounded by confetti rain with mouth wide open catching pieces"
     ];
     
     const selectedActivity = activities[Math.floor(Math.random() * activities.length)];
-    console.log('Selected mischievous activity:', selectedActivity);
+    console.log('Selected party activity:', selectedActivity);
     
-    // Prompt with FORCED MISCHIEVOUS ACTION at the top
-    const prompt = `MISCHIEVOUS NYE ACTION (CRITICAL - MUST SHOW THIS):
-The Party Puff is ${selectedActivity}.
-Show the messy, chaotic aftermath of partying too hard. This is NOT wholesome, this is hilarious party chaos.
+    // Prompt with MANDATORY activity enforcement
+    const prompt = `MANDATORY REQUIREMENT - READ THIS FIRST:
+The Party Puff MUST be doing this EXACT action: ${selectedActivity}
+This is REQUIRED. Do NOT create a static pose. Do NOT ignore this action.
+The activity MUST be clearly visible and happening in the image.
 
-Create a single cute 'Party Puff' mascot character that partied way too hard on New Year's Eve.
+Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
 
 The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
+
+ACTIVITY REQUIREMENT (CRITICAL):
+The character is REQUIRED to be ${selectedActivity}.
+Show this action clearly. The props mentioned in the action (champagne bottle, party hats, sparklers, confetti, streamers, etc.) MUST be visible and actively being used.
+DO NOT create a generic standing pose.
+DO NOT ignore the specified activity.
 
 COLOR RULES (STRICT - USE THE ACTUAL COLORS):
 - The body color MUST be ${primaryColor}. If the color is dark (brown, black, navy), use that dark color for the body.
 - Secondary details MUST use ${secondaryColor}.
 - Small accents ONLY may use ${accentColor}.
 - Do NOT default to white, cream, or beige unless those are the specified colors.
-- Do NOT introduce any new dominant colors.
 - The Party Puff should clearly match the color vibe of the source (dark colors stay dark, bright colors stay bright).
 
 STYLE RULES:
 - Flat-shaded, soft gradients only.
-- Smooth outlines.
-- No realism, no painterly texture.
-- Exactly two eyes (can be dizzy/spinning/half-closed).
-- One mouth (can be open, drooling, hiccupping, or messy).
-- Dynamic pose showing the aftermath of partying.
+- Smooth outlines, clean shapes.
+- No realism, no painterly texture, no fur texture.
+- Exactly two eyes (big, expressive, happy).
+- One mouth (smiling, laughing, or celebrating).
+- Cute and appealing - think game mascot or sticker.
 
-PARTY CHAOS ENERGY:
-- Messy, disheveled, comedic chaos
-- Empty champagne bottles, confetti stuck everywhere, streamers tangled
-- Motion lines showing dizziness, stumbling, or wobbling
-- This is "the morning after" or "mid-party-disaster" energy
-- Still cute but absolutely wrecked from celebrating
-- NOT clean, NOT wholesome, NOT perfect
+PARTY CELEBRATION ENERGY:
+- High-energy NYE celebration
+- Props mentioned in the activity MUST be clearly visible
+- Bright, colorful, festive atmosphere
+- Motion and action visible
+- Fun and playful - NOT dark, NOT creepy, NOT grotesque
 
 COMPOSITION:
-- Character in chaotic situation
+- Centered character actively doing the specified activity
 - 1:1 aspect ratio
 - High clarity
-- Party mess visible (bottles, confetti, streamers, glitter)
+- Festive NYE background
 
-The colors MUST match the uploaded image's vibe.`;
+REPEAT: The Party Puff MUST be ${selectedActivity}. This is not optional.`;
 
-    const negativePrompt = `standing still, static pose, calm, neutral expression, just standing, not moving, no action, photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character, rosy cheeks, pink cheek circles`;
+    const negativePrompt = `grotesque, garbage pail kids, ugly, disgusting, gross, scary, horror, dark, gritty, dirty, grimy, standing still, static pose, calm, neutral expression, photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, text, logo, watermark, creepy, distorted anatomy`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
