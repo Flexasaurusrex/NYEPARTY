@@ -126,33 +126,43 @@ module.exports = async function handler(req, res) {
     const selectedVibe = vibes[Math.floor(Math.random() * vibes.length)];
     console.log('Selected vibe:', selectedVibe);
     
-    // Emotional/energy-based prompt
-    const prompt = `A cute round 'Party Puff' mascot - a ${speciesCue} celebrating New Year's Eve.
+    // Style-locked 2D flat illustration prompt
+    const prompt = `Flat 2D vector illustration. Simple cartoon. Game sprite style. Sticker art.
 
+A cute round 'Party Puff' mascot - a ${speciesCue} celebrating New Year's Eve.
 The Party Puff is ${selectedVibe}.
 
+ART STYLE (LOCKED):
+2D flat illustration
+Vector art style
+Simple shapes with bold outlines
+Flat cell shading
+Like a: game character icon, emoji, or digital sticker
+NO 3D
+NO realistic rendering
+NO fur texture
+NO depth effects
+
 CHARACTER:
-Round chubby body
-Simple cartoon mascot style
-Two big expressive eyes
-Smiling mouth
-Clean flat shading
+Simple round body
+Two simple eyes (dots or ovals)
+Small smile
+Minimal geometric shapes
+Flat colors
 
-COLOR (CRITICAL):
+COLORS:
 Body: ${primaryColor}
-Details: ${secondaryColor}  
+Details: ${secondaryColor}
 Accents: ${accentColor}
-Match these colors exactly.
 
-ATMOSPHERE:
-New Year's Eve party setting
-Festive chaos - confetti, sparkles, streamers, champagne bottles
-Celebratory energy
-Colorful festive background
+SCENE:
+NYE party elements (confetti, sparkles, streamers)
+Simple flat background
+Celebratory
 
-Style: cute game mascot, sticker-like, 1:1 square format.`;
+1:1 square format, centered, 2D flat illustration.`;
 
-    const negativePrompt = `realistic, photorealistic, 3D render, extra eyes, extra faces, multiple characters, text, watermark, horror, scary, grotesque, ugly`;
+    const negativePrompt = `3D render, realistic, photorealistic, CGI, Unreal Engine, cinema4d, octane render, ray tracing, subsurface scattering, fur, hair, fluffy, fuzzy, soft lighting, depth of field, bokeh depth, volumetric lighting, ambient occlusion, detailed shading, complex lighting, extra eyes, extra faces, text, watermark`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
