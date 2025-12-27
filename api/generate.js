@@ -110,29 +110,33 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Add random NYE activity selection
+    // Mischievous/messy NYE activities
     const activities = [
-      "popping a champagne bottle with spray everywhere",
-      "throwing confetti up in the air with both arms raised",
-      "blowing a party horn aggressively",
-      "holding sparklers in both hands with trails of light",
-      "dancing wildly with streamers flying",
-      "jumping in celebration with fireworks behind",
-      "wearing stacked party hats that are falling off",
-      "holding a 'HAPPY NEW YEAR' banner and cheering",
-      "riding on top of a giant champagne cork",
-      "juggling party poppers mid-explosion"
+      "passed out on the floor with empty champagne bottles scattered around",
+      "stumbling around dizzy with party hat crooked and eyes spinning",
+      "hungover with messy confetti stuck all over, holding head in pain",
+      "chugging champagne straight from the bottle with foam everywhere",
+      "tangled up in streamers looking confused and disheveled",
+      "wearing way too many party hats stacked dangerously high",
+      "drunkenly dancing on a table with champagne splashing",
+      "face-planted into a cake with frosting everywhere",
+      "passed out hugging an empty champagne bottle like a teddy bear",
+      "spinning around dizzy with stars circling the head",
+      "hiccupping with bubbles coming out, looking dazed",
+      "attempting to stand but tipping over with legs wobbly",
+      "covered in glitter and confetti looking absolutely wrecked",
+      "partying too hard with tongue out and eyes half-closed"
     ];
     
     const selectedActivity = activities[Math.floor(Math.random() * activities.length)];
-    console.log('Selected NYE activity:', selectedActivity);
+    console.log('Selected mischievous activity:', selectedActivity);
     
-    // Prompt with FORCED ACTION at the top
-    const prompt = `NYE ACTION (CRITICAL - MUST SHOW THIS):
-The Party Puff is actively ${selectedActivity}.
-Show dynamic motion, NOT a static pose. The character MUST be mid-action with movement visible.
+    // Prompt with FORCED MISCHIEVOUS ACTION at the top
+    const prompt = `MISCHIEVOUS NYE ACTION (CRITICAL - MUST SHOW THIS):
+The Party Puff is ${selectedActivity}.
+Show the messy, chaotic aftermath of partying too hard. This is NOT wholesome, this is hilarious party chaos.
 
-Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
+Create a single cute 'Party Puff' mascot character that partied way too hard on New Year's Eve.
 
 The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
 
@@ -147,23 +151,24 @@ COLOR RULES (STRICT - USE THE ACTUAL COLORS):
 STYLE RULES:
 - Flat-shaded, soft gradients only.
 - Smooth outlines.
-- No realism, no painterly texture, no fur unless explicitly implied by the species cue.
-- Exactly two eyes.
-- One mouth (open in excitement/celebration).
-- Dynamic pose showing action.
+- No realism, no painterly texture.
+- Exactly two eyes (can be dizzy/spinning/half-closed).
+- One mouth (can be open, drooling, hiccupping, or messy).
+- Dynamic pose showing the aftermath of partying.
 
-NYE BIG ENERGY:
-- High-energy celebration
-- Motion lines, sparkles, confetti actively flying
-- Fireworks, champagne spray, or party effects clearly visible
-- The character should look like they're having the time of their life
-- NOT calm, NOT standing still, NOT just posing
+PARTY CHAOS ENERGY:
+- Messy, disheveled, comedic chaos
+- Empty champagne bottles, confetti stuck everywhere, streamers tangled
+- Motion lines showing dizziness, stumbling, or wobbling
+- This is "the morning after" or "mid-party-disaster" energy
+- Still cute but absolutely wrecked from celebrating
+- NOT clean, NOT wholesome, NOT perfect
 
 COMPOSITION:
-- Centered character mid-action
+- Character in chaotic situation
 - 1:1 aspect ratio
 - High clarity
-- Celebratory background with NYE elements (fireworks, lights, bokeh)
+- Party mess visible (bottles, confetti, streamers, glitter)
 
 The colors MUST match the uploaded image's vibe.`;
 
