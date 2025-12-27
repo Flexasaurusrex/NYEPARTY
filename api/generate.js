@@ -69,50 +69,62 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Simple cute variations
+    // Simple pose variations
     const poses = [
-      "jumping happily with confetti around",
-      "wearing a party hat and smiling",
-      "holding a sparkler",
-      "celebrating with arms up",
-      "surrounded by NYE sparkles"
+      "holding a sparkler up in the air cheerfully",
+      "wearing a party hat and celebrating with arms raised",
+      "jumping joyfully with confetti around",
+      "waving happily with a big smile",
+      "holding a noisemaker and looking excited"
     ];
     const selectedPose = poses[Math.floor(Math.random() * poses.length)];
     
-    // Simple, consistent prompt
-    const prompt = `A cute round Party Puff mascot celebrating New Year's Eve.
+    // Style-locked prompt (matches the working example)
+    const prompt = `A cute round Party Puff character celebrating New Year's Eve.
 
 Character is a ${speciesCue}, ${selectedPose}.
 
-STYLE:
-Flat 2D illustration
-Simple cartoon style
-Bold clean outlines
-Soft shading
-Like a game character or sticker
+STYLE (CRITICAL - LOCK THIS):
+Polished digital illustration
+Soft gradient shading with rim lighting
+Clean cartoon style with depth
+Warm orange/yellow rim light on edges
+Smooth rounded shapes
+Professional game art quality
+Like a mobile game character or children's book illustration
 
-CHARACTER:
-Round chubby body
-Two simple eyes
-Small happy smile
-Cute and friendly
+CHARACTER DESIGN:
+Round teardrop-shaped body
+Two large expressive black eyes with white highlights
+Wide happy smile
+Small simple limbs (arms and feet)
+Cute and appealing proportions
 
-COLORS (CRITICAL):
-Body color: ${primaryColor}
-Details: ${secondaryColor}
-Accents: ${accentColor}
-Use these exact colors
+COLORS (MUST MATCH):
+Primary body color: ${primaryColor}
+Secondary/shadow tones: darker ${primaryColor}
+Accent highlights: ${accentColor}
+Warm rim lighting: orange/yellow glow
+Use the exact color palette provided
 
-SCENE:
-New Year's Eve celebration
-Confetti and sparkles
-Simple festive background
-Centered composition
-1:1 square
+SCENE & ATMOSPHERE:
+New Year's Eve celebration at night
+Fireworks bursting in background (gold and colorful)
+Confetti falling
+Dark blue/purple night sky
+Warm festive lighting
+Character is clearly lit and stands out
 
-Cute, simple, clean illustration.`;
+COMPOSITION:
+Centered character
+Character takes up most of frame
+Slight low angle view
+Festive background depth
+1:1 square format
 
-    const negativePrompt = `realistic, photorealistic, 3D render, complex, detailed, scary, ugly, extra eyes, extra faces, text, watermark, dark, gritty`;
+The result should look polished, professional, and joyful.`;
+
+    const negativePrompt = `flat 2D, vector art, simplistic, minimalist, sketch, rough, messy, photorealistic, 3D render, realistic fur, extra eyes, extra faces, multiple characters, text, watermark, dark mood, scary, ugly, deformed`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
