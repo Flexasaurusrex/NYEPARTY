@@ -69,100 +69,85 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // ACTIONS LIST (choose exactly ONE each generation)
-    const actions = [
-      "popping a confetti cannon mid-blast (confetti burst clearly visible)",
-      "spraying champagne everywhere (champagne spray arc clearly visible)",
-      "swinging a sparkler like a wand (sparkler trails clearly visible)",
-      "tossing streamers aggressively (streamers clearly flying)",
-      "riding a tiny rocket firework (small rocket with sparks, puff holding on)",
-      "stealing a party hat and wearing it sideways (mischief pose, hat clearly askew)"
+    // Chaotic behaviors
+    const behaviors = [
+      "mid-jump, slightly out of control",
+      "leaning backward while fireworks misfire",
+      "spinning wildly, bouncing through the frame",
+      "tripping over confetti, flailing",
+      "launching a sparkler that's too close",
+      "careening sideways as champagne sprays",
+      "caught mid-spin with party hat flying off",
+      "stumbling forward with arms windmilling"
     ];
+    const selectedBehavior = behaviors[Math.floor(Math.random() * behaviors.length)];
+    console.log('Selected behavior:', selectedBehavior);
     
-    // PROPS LIST (choose exactly ONE each generation)
-    const props = [
-      "confetti cannon",
-      "champagne bottle spraying",
-      "sparkler",
-      "party hat"
-    ];
-    
-    // Random selection
-    const actionChoice = actions[Math.floor(Math.random() * actions.length)];
-    
-    // Match prop to action
-    let propChoice;
-    if (actionChoice.includes("confetti cannon")) {
-      propChoice = "confetti cannon";
-    } else if (actionChoice.includes("champagne")) {
-      propChoice = "champagne bottle spraying";
-    } else if (actionChoice.includes("sparkler")) {
-      propChoice = "sparkler";
-    } else if (actionChoice.includes("party hat")) {
-      propChoice = "party hat";
-    } else if (actionChoice.includes("rocket firework")) {
-      propChoice = Math.random() > 0.5 ? "sparkler" : "confetti cannon";
-    } else {
-      propChoice = props[Math.floor(Math.random() * props.length)];
-    }
-    
-    console.log('Primary color:', primaryColor, '(from', paletteHex[0], ')');
-    console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
-    console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
-    
-    // Energy/vibe variation - FLUX understands emotions better than actions
-    const vibes = [
-      "ecstatic and jumping with joy, confetti exploding around them",
-      "dizzy and spinning with stars circling their head, party hat flying off",
-      "exhausted but happy, surrounded by empty champagne bottles and party debris",
-      "mischievously laughing while covered in glitter and streamers",
-      "dancing wildly with arms up, champagne foam spraying",
-      "sleepy and content, hugging a champagne bottle like a teddy bear",
-      "excited and yelling with a party horn, confetti shooting out",
-      "playfully tangled in streamers, giggling",
-      "triumphantly raising a champagne bottle overhead like a trophy",
-      "laying down surrounded by party chaos, looking satisfied"
-    ];
-    const selectedVibe = vibes[Math.floor(Math.random() * vibes.length)];
-    console.log('Selected vibe:', selectedVibe);
-    
-    // Style-locked 2D flat illustration prompt
-    const prompt = `Flat 2D vector illustration. Simple cartoon. Game sprite style. Sticker art.
+    // Chaotic spirit prompt
+    const prompt = `Create a single "Party Puff" — a mischievous spirit-ball embodiment of chaotic New Year's Eve energy.
 
-A cute round 'Party Puff' mascot - a ${speciesCue} celebrating New Year's Eve.
-The Party Puff is ${selectedVibe}.
+CONCEPT:
+Party Puffs are NOT mascots and NOT polite characters.
+They are chaotic NYE spirit entities — playful, unhinged, slightly dangerous, and having WAY too much fun.
+Think: Tarantino's "Four Rooms" energy in puffball spirit form.
 
-ART STYLE (LOCKED):
-2D flat illustration
-Vector art style
-Simple shapes with bold outlines
-Flat cell shading
-Like a: game character icon, emoji, or digital sticker
-NO 3D
-NO realistic rendering
-NO fur texture
-NO depth effects
+STYLE:
+- Round, soft, puffball creature
+- Cartoon / illustrated (not realistic)
+- Bold outlines, expressive shapes
+- High-contrast, cinematic lighting
+- Sticker-readable at small sizes
 
-CHARACTER:
-Simple round body
-Two simple eyes (dots or ovals)
-Small smile
-Minimal geometric shapes
-Flat colors
+COLOR RULE (CRITICAL — MUST FOLLOW):
+The Party Puff's PRIMARY body color MUST be ${primaryColor}.
+Secondary details must use ${secondaryColor}.
+Accent highlights must use ${accentColor}.
+NO unrelated palettes.
+Color connection must be obvious at a glance.
 
-COLORS:
-Body: ${primaryColor}
-Details: ${secondaryColor}
-Accents: ${accentColor}
+SPECIES / VIBE CUE:
+This is a ${speciesCue}.
 
-SCENE:
-NYE party elements (confetti, sparkles, streamers)
-Simple flat background
-Celebratory
+ENERGY & BEHAVIOR (MOST IMPORTANT):
+The Party Puff is ${selectedBehavior}.
+It is NOT standing still or posing for a photo.
+Clearly caught in a chaotic NYE moment.
 
-1:1 square format, centered, 2D flat illustration.`;
+POSE:
+- Asymmetrical
+- Off-balance
+- Dynamic
+- Captured mid-action
 
-    const negativePrompt = `3D render, realistic, photorealistic, CGI, Unreal Engine, cinema4d, octane render, ray tracing, subsurface scattering, fur, hair, fluffy, fuzzy, soft lighting, depth of field, bokeh depth, volumetric lighting, ambient occlusion, detailed shading, complex lighting, extra eyes, extra faces, text, watermark`;
+EXPRESSION:
+- Wild, mischievous, overexcited
+- Open-mouth laughter or yelling
+- Eyes wide, sparkling, or slightly uneven from motion
+- NOT calm
+- NOT polite
+
+NYE CHAOS ELEMENTS:
+- Fireworks exploding unevenly or sideways
+- Confetti flying chaotically (not evenly)
+- One prop malfunctioning or crooked (hat slipping, sparkler too close)
+- Visual motion cues: sparks, trails, bursts
+
+BACKGROUND:
+- Simple but cinematic
+- Implies noise, motion, and chaos
+- Fireworks, sparks, light bursts
+- No detailed scenery
+
+COMPOSITION RULES:
+- Slightly off-center framing
+- Clear silhouette
+- Feels like a frame pulled from a chaotic NYE scene
+- NOT symmetrical
+- NOT static
+
+The body MUST be ${primaryColor}.`;
+
+    const negativePrompt = `calm poses, standing neutrally, perfect symmetry, polite smiles, generic cute mascot, human anatomy, realistic textures, extra limbs, extra eyes, extra faces, photorealistic, 3D render, static, centered, balanced, clean portrait`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
