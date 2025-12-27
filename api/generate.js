@@ -110,16 +110,18 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Clean simplified prompt - focus on color matching
+    // Clean simplified prompt with variety
     const prompt = `Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
 
 The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
 
-COLOR RULES (STRICT):
-- The body color MUST be based on ${primaryColor}.
+COLOR RULES (STRICT - USE THE ACTUAL COLORS):
+- The body color MUST be ${primaryColor}. If the color is dark (brown, black, navy), use that dark color for the body.
 - Secondary details MUST use ${secondaryColor}.
 - Small accents ONLY may use ${accentColor}.
+- Do NOT default to white, cream, or beige unless those are the specified colors.
 - Do NOT introduce any new dominant colors.
+- The Party Puff should clearly match the color vibe of the source (dark colors stay dark, bright colors stay bright).
 
 STYLE RULES:
 - Flat-shaded, soft gradients only.
@@ -129,11 +131,18 @@ STYLE RULES:
 - One mouth.
 - No extra limbs, faces, or features.
 
+NYE VARIETY (ADD PERSONALITY):
+Choose ONE of these to add variety:
+- ACCESSORIES: party hat, novelty glasses (star-shaped, "2025" glasses), bow tie, confetti stuck in fur/body, glitter sparkles on body
+- POSES: jumping with excitement, leaning back laughing, spinning, raising arms in celebration, sitting with legs kicked up
+- ACTIVITIES: blowing a party horn, holding sparklers, popping champagne, tossing confetti, wearing multiple party hats stacked, holding a "Happy New Year" banner
+
+The character should feel dynamic and celebratory, not just standing still.
+
 NYE DETAILS:
-- One small party hat OR one festive accessory (not both).
 - Subtle sparkles or confetti around the character.
 - Clean, sticker-like composition.
-- Neutral or soft background that does NOT overpower the character.
+- Background color should complement ${primaryColor} (darker backgrounds for light puffs, lighter backgrounds for dark puffs).
 
 COMPOSITION:
 - Centered character
@@ -143,9 +152,9 @@ COMPOSITION:
 
 IMPORTANT:
 This must feel PERSONAL because of the color palette and species cue.
+The colors MUST match the uploaded image's vibe.
 Avoid generic pastel blobs.
-Avoid random color choices.
-Avoid default "cute mascot" tropes unless they match the given palette.`;
+Avoid random color choices.`;
 
     const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character`;
 
