@@ -438,7 +438,7 @@
         <div class="main-card">
             <!-- Info Box -->
             <div class="info-box">
-                <strong>✨ How it works:</strong> Upload your PFP to inspire a Party Puff — a cute, round mascot celebrating NYE! We use your colors and vibes to create an original Party Puff character. Not a transformation, but a brand-new friend! Powered by <a href="https://replicate.com" target="_blank">SDXL on Replicate</a>
+                <strong>✨ How it works:</strong> Upload your PFP to inspire a Party Puff — a cute, round mascot celebrating NYE! We use your colors and vibes to create an original Party Puff character. <strong>Inspired by your PFP's colors and vibe — not a replacement, a celebration.</strong> Powered by <a href="https://replicate.com" target="_blank">FLUX on Replicate</a>
             </div>
 
             <!-- Upload Section -->
@@ -590,7 +590,7 @@
                 console.log('Stats:', stats);
 
                 // Call the backend API
-                const response = await fetch('/api/generate', {
+                const response = await fetch('/api/generate-dalle', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
