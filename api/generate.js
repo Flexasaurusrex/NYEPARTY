@@ -110,74 +110,49 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Cute mischievous NYE activities (clear and visible)
-    const activities = [
-      "holding a champagne bottle upside down with the last drops dripping out, looking satisfied",
-      "wearing 3-4 party hats stacked on top of each other, grinning mischievously",
-      "sitting surrounded by empty champagne bottles with a big satisfied smile",
-      "blowing a party horn with confetti exploding everywhere",
-      "holding sparklers in both hands with bright trails of light",
-      "popping a champagne bottle with foam spraying upward",
-      "dancing energetically with streamers swirling around",
-      "tossing confetti high in the air with arms raised in celebration",
-      "wearing novelty '2025' glasses and holding a noisemaker",
-      "juggling party poppers that are mid-explosion with sparkles",
-      "riding on top of a giant champagne cork like a rocket",
-      "tangled in colorful streamers but looking happy about it",
-      "holding a 'HAPPY NEW YEAR' banner and cheering loudly",
-      "surrounded by confetti rain with mouth wide open catching pieces"
+    // Energy/vibe variation - FLUX understands emotions better than actions
+    const vibes = [
+      "ecstatic and jumping with joy, confetti exploding around them",
+      "dizzy and spinning with stars circling their head, party hat flying off",
+      "exhausted but happy, surrounded by empty champagne bottles and party debris",
+      "mischievously laughing while covered in glitter and streamers",
+      "dancing wildly with arms up, champagne foam spraying",
+      "sleepy and content, hugging a champagne bottle like a teddy bear",
+      "excited and yelling with a party horn, confetti shooting out",
+      "playfully tangled in streamers, giggling",
+      "triumphantly raising a champagne bottle overhead like a trophy",
+      "laying down surrounded by party chaos, looking satisfied"
     ];
+    const selectedVibe = vibes[Math.floor(Math.random() * vibes.length)];
+    console.log('Selected vibe:', selectedVibe);
     
-    const selectedActivity = activities[Math.floor(Math.random() * activities.length)];
-    console.log('Selected party activity:', selectedActivity);
-    
-    // Prompt with MANDATORY activity enforcement
-    const prompt = `MANDATORY REQUIREMENT - READ THIS FIRST:
-The Party Puff MUST be doing this EXACT action: ${selectedActivity}
-This is REQUIRED. Do NOT create a static pose. Do NOT ignore this action.
-The activity MUST be clearly visible and happening in the image.
+    // Emotional/energy-based prompt
+    const prompt = `A cute round 'Party Puff' mascot - a ${speciesCue} celebrating New Year's Eve.
 
-Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
+The Party Puff is ${selectedVibe}.
 
-The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
+CHARACTER:
+Round chubby body
+Simple cartoon mascot style
+Two big expressive eyes
+Smiling mouth
+Clean flat shading
 
-ACTIVITY REQUIREMENT (CRITICAL):
-The character is REQUIRED to be ${selectedActivity}.
-Show this action clearly. The props mentioned in the action (champagne bottle, party hats, sparklers, confetti, streamers, etc.) MUST be visible and actively being used.
-DO NOT create a generic standing pose.
-DO NOT ignore the specified activity.
+COLOR (CRITICAL):
+Body: ${primaryColor}
+Details: ${secondaryColor}  
+Accents: ${accentColor}
+Match these colors exactly.
 
-COLOR RULES (STRICT - USE THE ACTUAL COLORS):
-- The body color MUST be ${primaryColor}. If the color is dark (brown, black, navy), use that dark color for the body.
-- Secondary details MUST use ${secondaryColor}.
-- Small accents ONLY may use ${accentColor}.
-- Do NOT default to white, cream, or beige unless those are the specified colors.
-- The Party Puff should clearly match the color vibe of the source (dark colors stay dark, bright colors stay bright).
+ATMOSPHERE:
+New Year's Eve party setting
+Festive chaos - confetti, sparkles, streamers, champagne bottles
+Celebratory energy
+Colorful festive background
 
-STYLE RULES:
-- Flat-shaded, soft gradients only.
-- Smooth outlines, clean shapes.
-- No realism, no painterly texture, no fur texture.
-- Exactly two eyes (big, expressive, happy).
-- One mouth (smiling, laughing, or celebrating).
-- Cute and appealing - think game mascot or sticker.
+Style: cute game mascot, sticker-like, 1:1 square format.`;
 
-PARTY CELEBRATION ENERGY:
-- High-energy NYE celebration
-- Props mentioned in the activity MUST be clearly visible
-- Bright, colorful, festive atmosphere
-- Motion and action visible
-- Fun and playful - NOT dark, NOT creepy, NOT grotesque
-
-COMPOSITION:
-- Centered character actively doing the specified activity
-- 1:1 aspect ratio
-- High clarity
-- Festive NYE background
-
-REPEAT: The Party Puff MUST be ${selectedActivity}. This is not optional.`;
-
-    const negativePrompt = `grotesque, garbage pail kids, ugly, disgusting, gross, scary, horror, dark, gritty, dirty, grimy, standing still, static pose, calm, neutral expression, photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, text, logo, watermark, creepy, distorted anatomy`;
+    const negativePrompt = `realistic, photorealistic, 3D render, extra eyes, extra faces, multiple characters, text, watermark, horror, scary, grotesque, ugly`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
