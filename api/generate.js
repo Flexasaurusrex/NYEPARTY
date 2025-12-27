@@ -109,8 +109,14 @@ module.exports = async function handler(req, res) {
     console.log('Action choice:', actionChoice);
     console.log('Prop choice:', propChoice);
     
-    // FINAL PROMPT (verbatim with MISCHIEF ACTION section added)
-    const prompt = `Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
+    // FINAL PROMPT - MISCHIEF ACTION MOVED TO TOP FOR PRIORITY
+    const prompt = `MISCHIEF ACTION (CRITICAL - MAIN SUBJECT):
+The Party Puff is actively ${actionChoice}.
+The prop MUST be clearly visible and actively being used: ${propChoice}.
+Show clear motion: spark trails, confetti burst, champagne spray arc, flying streamers, or rocket sparks.
+Dynamic pose showing the action. NOT standing still. NOT just holding the prop.
+
+Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
 
 The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
 
@@ -129,17 +135,9 @@ STYLE RULES:
 - No extra limbs, faces, or features.
 
 NYE DETAILS:
-- One small party hat OR one festive accessory (not both).
 - Subtle sparkles or confetti around the character.
 - Clean, sticker-like composition.
 - Neutral or soft background that does NOT overpower the character.
-
-MISCHIEF ACTION (CRITICAL):
-- The Party Puff is actively doing this action: ${actionChoice}.
-- The prop MUST be clearly visible and actively used: ${propChoice}.
-- The action must read instantly at thumbnail size: clear pose + clear prop + clear motion cues (spark trails / confetti burst / champagne spray / flying streamers / rocket sparks).
-- Keep the composition centered, but allow arms/pose to show the action. No static standing pose.
-- Mischievous fun energy (chaotic NYE spirit) but NOT scary, NOT angry, NOT horror.
 
 COMPOSITION:
 - Centered character
@@ -147,13 +145,11 @@ COMPOSITION:
 - High clarity, no motion blur
 - Friendly, joyful expression (small open smile, not huge mouth)
 
-IMPORTANT:
 This must feel PERSONAL because of the color palette and species cue.
 Avoid generic pastel blobs.
-Avoid random color choices.
-Avoid default "cute mascot" tropes unless they match the given palette.`;
+Avoid random color choices.`;
 
-    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character, blush cheeks, rosy cheeks, cheek circles, pink cheek dots, kawaii blush`;
+    const negativePrompt = `standing still, static pose, just holding prop, posing, photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, muted colors, random colors, neon unless specified, gradients that overpower the character, blush cheeks, rosy cheeks, cheek circles, pink cheek dots, kawaii blush`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
