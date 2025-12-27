@@ -69,39 +69,52 @@ module.exports = async function handler(req, res) {
     console.log('Secondary color:', secondaryColor, '(from', paletteHex[1], ')');
     console.log('Accent color:', accentColor, '(from', paletteHex[2], ')');
     
-    // Build prompt with COLOR NAMES not hex codes
-    const prompt = `Create a single cute 'Party Puff' mascot character celebrating New Year's Eve.
-The character must be a ${speciesCue} with a simple, round, chubby body and clean cartoon style.
+    // Drop-in replacement prompt (optimized)
+    const prompt = `Create a single 'Party Puff' NYE mascot — a mischievous spirit-ball of chaotic New Year's energy (playful troublemaker, not scary).
+The character must be a ${speciesCue} with a simple, round, chubby puffball body in a stylized video game mascot portrait style (character icon).
 
 COLOR RULES (CRITICAL - FOLLOW EXACTLY):
 - The main body color MUST be ${primaryColor}. Make the entire body ${primaryColor}.
 - Secondary details and accents MUST use ${secondaryColor}.
 - Small highlights ONLY may use ${accentColor}.
 - The character should be PRIMARILY ${primaryColor} in color.
-- Do NOT use random pastels or beige unless that is the specified color.
+- Do NOT use random pastels, beige, cream, or skin tones unless that is the specified color.
 
-STYLE RULES:
-- Flat-shaded, soft gradients only.
-- Smooth outlines.
-- No realism, no painterly texture.
-- Exactly two eyes.
-- One mouth.
-- No extra limbs, faces, or features.
+STYLE LOCK (IMPORTANT):
+- Stylized video game mascot / character icon.
+- Clean shading, flat lighting, bold colors, crisp outlines.
+- Simple soft gradients only (no realism, no cinematic lighting, no 3D render look).
+- Exactly two eyes. One mouth. No extra faces/eyes/limbs.
 
-NYE DETAILS:
-- One small party hat OR one festive accessory.
-- Subtle sparkles or confetti around the character.
-- Clean, sticker-like composition.
-- Simple background.
+MISCHIEF ACTION (CHOOSE ONE SCENE — show clear action, not just posing):
+- popping a confetti cannon mid-blast
+- spraying champagne everywhere (comedic, messy spray)
+- swinging a sparkler like a tiny wand leaving a glitter trail
+- tossing party streamers / blowing a party horn aggressively
+- riding a tiny rocket firework like a rebel
+- stealing the party hat and wearing it sideways like a menace
+The expression should read: "mischievous / chaotic fun" (smirk, gremlin grin, playful eyebrow tilt) — NOT angry horror.
+
+NYE PROP ANCHOR (1–2 props max, must be visible and obvious):
+- party hat OR sparkler OR confetti cannon OR champagne spray
+Include falling confetti and a few sparkle stars.
+
+CHEEKS / FACE:
+- NO rosy cheeks, no blush circles. Keep face clean and simple.
 
 COMPOSITION:
-- Centered character
-- 1:1 aspect ratio
-- Friendly, joyful expression
+- Centered character, full body visible, sticker-like cutout with a clean outline.
+- Simple background (single color or subtle gradient) using ${secondaryColor} or a darker shade of ${primaryColor}.
+- 1:1 aspect ratio.
+- No text.
 
 The body MUST be ${primaryColor}. This is the most important rule.`;
 
-    const negativePrompt = `photorealistic, realistic lighting, painterly, sketchy, messy lines, extra eyes, extra faces, multiple characters, complex background, text, logo, watermark, signature, horror, creepy, distorted anatomy, beige, cream, pastel pink, random colors, default colors`;
+    const negativePrompt = `photorealistic, realism, cinematic lighting, ultra detailed, highly detailed, 3d render, furry realistic creature, creepy, horror, terrifying, angry demon, gore, disturbing,
+blush, rosy cheeks, pink cheeks, makeup,
+extra eyes, extra faces, multiple characters, complex background, clutter, scenery, room interior,
+text, letters, logo, watermark, signature,
+beige, cream, pastel, random colors, default colors, skin tones`;
 
     // FLUX 1.1 Pro with recommended settings
     const response = await fetch('https://api.replicate.com/v1/predictions', {
